@@ -3,7 +3,7 @@
 
 #include "entity.h"
 
-class knight : protected entity
+class knight : public entity
 {
 public:
     knight(int x, int y)

@@ -3,7 +3,7 @@
 
 #include "entity.h"
 
-class worker : protected entity
+class worker : public entity
 {
 public:
     worker(int x, int y)

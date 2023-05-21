@@ -3,7 +3,7 @@
 
 #include "entity.h"
 
-class pikeman : protected entity
+class pikeman : public entity
 {
 public:
     pikeman(int x, int y)

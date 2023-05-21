@@ -3,7 +3,7 @@
 
 #include "entity.h"
 
-class ram : protected entity
+class ram : public entity
 {
 public:
     ram(int x, int y)

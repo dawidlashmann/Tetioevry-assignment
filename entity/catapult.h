@@ -3,7 +3,7 @@
 
 #include "entity.h"
 
-class catapult : protected entity
+class catapult : public entity
 {
 public:
     catapult(int x, int y)
