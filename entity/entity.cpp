@@ -8,6 +8,8 @@ bool entity::move(int newX, int newY)
         return false;
     }
     speed -= range;
+    this->x = newX;
+    this->y = newY;
     return true;
 }
 
@@ -25,4 +27,14 @@ bool entity::attack(int attX, int attY)
     speed -= 1;
     attacked = true;
     return true;
+}
+
+void entity::damage(int newHealth)
+{
+    this->health -= newHealth;
+}
+
+std::pair<int, int> entity::get_position()
+{
+    return std::pair<int, int>{this->x, this->y};
 }

@@ -1,6 +1,7 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include <utility>
 #include "cmath"
 
 class entity
@@ -8,12 +9,18 @@ class entity
 public:
     entity(){};
 
-    // this function checks if the entity can move to the given coordinates
+    // checks if the entity can move to the given coordinates
     // it does not check if the coordinates are occupied or even exist
     bool move(int newX, int newY);
-    // this function checks if the entity has the range to attack given coordinates
+    // checks if the entity has the range to attack given coordinates
     // it does not check if the coordinates are occupied by the enemy entity
     bool attack(int attX, int attY);
+    // subtracts given int from current health
+    void damage(int newhp);
+    // returns current coordinates: x and y
+    std::pair<int, int> get_position();
+    char get_type() { return unitType; }
+    int get_health() { return health; }
 
 protected:
     // current position

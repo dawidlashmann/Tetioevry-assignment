@@ -3,7 +3,7 @@
 
 #include "entity.h"
 
-class base : protected entity
+class base : public entity
 {
 public:
     base(int x, int y)
