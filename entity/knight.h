@@ -6,10 +6,10 @@
 class knight : protected entity
 {
 public:
-    knight()
+    knight(int x, int y)
     {
-        x = 0;
-        y = 0;
+        this->x = x;
+        this->y = y;
         health = 70;
         speed = 5;
         cost = 400;
