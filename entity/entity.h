@@ -10,12 +10,10 @@ public:
 
     // this function checks if the entity can move to the given coordinates
     // it does not check if the coordinates are occupied or even exist
-    virtual bool move(int newX, int newY) = 0;
+    bool move(int newX, int newY);
     // this function checks if the entity has the range to attack given coordinates
     // it does not check if the coordinates are occupied by the enemy entity
-    virtual bool attack(int attX, int attY) = 0;
-
-    virtual ~entity(){};
+    bool attack(int attX, int attY);
 
 protected:
     // current position

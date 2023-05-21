@@ -5,10 +5,19 @@
 
 class knight : protected entity
 {
-    knight();
-
-    virtual bool move(int newX, int newY) override;
-    virtual bool attack(int attX, int attY) override;
+public:
+    knight()
+    {
+        x = 0;
+        y = 0;
+        health = 70;
+        speed = 5;
+        cost = 400;
+        attackRange = 1;
+        buildTime = 5;
+        unitType = 'K';
+        attacked = false;
+    };
 };
 
 #endif
