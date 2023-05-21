@@ -1,6 +1,8 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include "cmath"
+
 class entity
 {
 public:
@@ -15,16 +17,18 @@ public:
 
     virtual ~entity(){};
 
-private:
+protected:
     // current position
     int x, y;
-    
-    int attackRange;
+
     int health;
     int speed;
     int cost;
+    int attackRange;
     int buildTime;
     char unitType;
+    // only one attack per turn is allowed
+    bool attacked;
 };
 
 #endif
