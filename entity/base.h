@@ -12,7 +12,12 @@ public:
         this->y = y;
         health = 200;
         speed = 0;
+        unitType = 'B';
+        buildTimeRemaining = -1;
     };
+
+private:
+    int buildTimeRemaining;
 };
 
 #endif

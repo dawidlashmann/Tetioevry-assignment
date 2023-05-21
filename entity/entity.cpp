@@ -14,7 +14,7 @@ bool entity::move(int newX, int newY)
 bool entity::attack(int attX, int attY)
 {
     // one attack per turn
-    if (attacked)
+    if (attacked || speed < 1)
         return false;
 
     int range = abs(attX - x) + abs(attY - y);
@@ -22,7 +22,7 @@ bool entity::attack(int attX, int attY)
     {
         return false;
     }
-
+    speed -= 1;
     attacked = true;
     return true;
 }

@@ -17,7 +17,11 @@ public:
         buildTime = 2;
         unitType = 'C';
         attacked = false;
+        mining = false;
     };
+
+public:
+    bool mining;
 };
 
 #endif
