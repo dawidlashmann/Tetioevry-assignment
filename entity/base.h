@@ -14,10 +14,33 @@ public:
         speed = 0;
         unitType = 'B';
         buildTimeRemaining = -1;
+        buildingEntity = ' ';
     };
+
+    void build(char unitType, int time)
+    {
+        buildingEntity = unitType;
+        buildTimeRemaining = time;
+    }
+
+    char get_building_type()
+    {
+        return buildingEntity;
+    }
+
+    int get_time_remaining()
+    {
+        return buildTimeRemaining;
+    }
+
+    void one_turn()
+    {
+        buildTimeRemaining--;
+    }
 
 private:
     int buildTimeRemaining;
+    char buildingEntity;
 };
 
 #endif
