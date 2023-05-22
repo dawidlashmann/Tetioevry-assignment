@@ -10,8 +10,8 @@ set(SOURCES1
 
 # Add the sources of the player program
 set(SOURCES2
-    mediator/player.cpp
-    mediator/main_player.cpp
+    player/player.cpp
+    player/main_player.cpp
     entity/entity.cpp
 )
 
