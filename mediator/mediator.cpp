@@ -4,9 +4,9 @@ mediator::mediator(const char *map, const char *status, const char *orders)
 {
     turn = 1;
     // remeber files names for reausage later on
-    file_names[0] = map;
-    file_names[1] = status;
-    file_names[2] = orders;
+    fileNames[0] = map;
+    fileNames[1] = status;
+    fileNames[2] = orders;
 
     // open .txt files
     this->map.open(map);
@@ -51,8 +51,65 @@ mediator::~mediator()
     orders.close();
 }
 
+void mediator::game_begin()
+{
+    // establish the command that will be run through linux command line
+    // define program name
+    const char *playerOneProgram = "player";
+    const char *playerTwoProgram = "player";
+
+    std::string commandOne = "./" + std::string(playerOneProgram) + "map.txt status.txt orders.txt";
+    std::string commandTwo = "./" + std::string(playerTwoProgram) + "map.txt status.txt orders.txt";
+
+    // game loop
+    while (true)
+    {
+        update_status();
+        check_for_new_entities();
+        system(commandOne.c_str());
+        // char c = getchar();
+        exec_orders();
+        // if the game has ended break from the loop
+        if (check_for_end_of_game() || winner != -1)
+        {
+            break;
+        }
+
+        turn = 0;
+
+        update_status();
+        check_for_new_entities();
+        system(commandTwo.c_str());
+        // char c = getchar();
+        exec_orders();
+        // if the game has ended break from the loop
+        if (check_for_end_of_game() || winner != -1)
+        {
+            break;
+        }
+
+        turn = 1;
+
+        turnNumber++;
+    }
+
+    switch (winner)
+    {
+    case 1:
+        std::cout << "Player One is the winner";
+        break;
+    case 2:
+        std::cout << "Player Two is the winner";
+        break;
+    case 3:
+        std::cout << "Draw";
+        break;
+    }
+}
+
 void mediator::update_status()
 {
+    // establish which current player's units
     auto &playerUnits = (turn) ? playerOneUnits : playerTwoUnits;
     auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
     auto &playerGold = (turn) ? gold.first : gold.second;
@@ -61,8 +118,11 @@ void mediator::update_status()
         return;
 
     status.close();
-    status.open(file_names[1], std::ios::trunc);
+    status.open(fileNames[1], std::ios::trunc);
+    
+    // write gold amount
     status << playerGold << '\n';
+    // write current player's units
     for (auto unit : playerUnits)
     {
         std::pair<int, int> coords = unit.second->get_position();
@@ -74,6 +134,7 @@ void mediator::update_status()
         }
         status << '\n';
     }
+    // write current enemy's units
     for (auto enemyUnit : enemyUnits)
     {
         std::pair<int, int> coords = enemyUnit.second->get_position();
@@ -121,6 +182,8 @@ void mediator::exec_orders()
             else
             {
                 throw "Unit with provided ID does not exists";
+                winner = (turn) ? 2 : 1;
+                return;
             }
 
             // perform an action based on given order
@@ -132,11 +195,15 @@ void mediator::exec_orders()
                     if (!unit->move(std::stoi(owbw[2]), std::stoi(owbw[3])))
                     {
                         throw "Given move is not valid";
+                        winner = (turn) ? 2 : 1;
+                        return;
                     };
                 }
                 else
                 {
                     throw "Given move is not valid";
+                    winner = (turn) ? 2 : 1;
+                    return;
                 }
             }
             else if (owbw[1] == "A")
@@ -151,6 +218,8 @@ void mediator::exec_orders()
                 else
                 {
                     throw "Enemy unit with provided ID does not exists";
+                    winner = (turn) ? 2 : 1;
+                    return;
                 }
 
                 auto coordinates = enemyUnit->get_position();
@@ -168,16 +237,24 @@ void mediator::exec_orders()
                 else
                 {
                     throw "Given attack is not valid";
+                    winner = (turn) ? 2 : 1;
+                    return;
                 }
             }
             else if (owbw[1] == "B")
             {
+                // cast to base_, to use it's methods
                 base_ *base = static_cast<base_ *>(playerUnits[0]);
+                // see if given ID is refering to the base
                 if (base != unit)
                 {
                     throw "Given ID is not a base";
+                    winner = (turn) ? 2 : 1;
+                    return;
                 }
 
+                // check if the base is already during building
+                // if not start building
                 if (base->get_time_remaining() <= 0)
                 {
                     entity *unitTypeToBuild = create_entity(owbw[2].c_str()[0], 0, 0);
@@ -187,11 +264,15 @@ void mediator::exec_orders()
                 else
                 {
                     throw "Base is already building";
+                    winner = (turn) ? 2 : 1;
+                    return;
                 }
             }
             else
             {
                 throw "Given order is not valid";
+                winner = (turn) ? 2 : 1;
+                return;
             }
         }
     }
@@ -261,8 +342,8 @@ int mediator::fight(char attacker, char defender)
 
 bool mediator::can_move(int x, int y)
 {
-    // can't move to a square occupied by enemy unit
-    auto &enemyUnits = (turn == 1) ? playerTwoUnits : playerOneUnits;
+    // can't move to a square occupied by enemy unit or base
+    auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
     for (auto enemyUnit : enemyUnits)
     {
         auto coordinates = enemyUnit.second->get_position();
@@ -280,10 +361,6 @@ bool mediator::can_move(int x, int y)
     // can't exit the map
     if (x >= mapSize.first || y >= mapSize.second || x < 0 || y < 0)
         return false;
-    // can't move to the enemy base square
-    auto enemyBaseCoords = enemyUnits[0]->get_position();
-    if (x == enemyBaseCoords.first && y == enemyBaseCoords.second)
-        return false;
 
     return true;
 }
@@ -294,18 +371,48 @@ void mediator::check_for_new_entities()
     auto &playerID = (turn) ? ID.first : ID.second;
     base_ *base = static_cast<base_ *>(playerUnits[0]);
 
-    if(base->get_building_type() == '0')
+    if (base->get_building_type() == '0')
         return;
 
     base->one_turn();
 
+    // if the base is building a unit and the remaining time is below or equal to 0, create that unit and add it to playerUnits
     if (base->get_time_remaining() <= 0)
     {
         std::pair<int, int> baseCoords = base->get_position();
         entity *newUnit = create_entity(base->get_building_type(), baseCoords.first, baseCoords.second);
         playerUnits.insert(std::make_pair(playerID, newUnit));
-        
+
         playerID++;
         base->build('0', -1);
     }
+}
+
+bool mediator::check_for_end_of_game()
+{
+    // if the turn number is 1000 or above declare the winner or draw
+    if (turnNumber >= 1000)
+    {
+        int playerOneUnitNumber = playerOneUnits.size();
+        int playerTwoUnitNumber = playerTwoUnits.size();
+        if (playerTwoUnitNumber == playerOneUnitNumber)
+        {
+            winner = 0;
+        }
+        else
+        {
+            winner = (playerOneUnitNumber > playerTwoUnitNumber) ? 1 : 2;
+        }
+        return 1;
+    }
+    // check if the enemy base health is below or equal to 0
+    entity *entPtr = (turn) ? playerTwoUnits[0] : playerOneUnits[0];
+    base_ *enemyBase = static_cast<base_ *>(entPtr);
+    if (enemyBase->get_health() <= 0)
+    {
+        winner = (turn) ? 1 : 2;
+        return 1;
+    }
+
+    return 0;
 }
