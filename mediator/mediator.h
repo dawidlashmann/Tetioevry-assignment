@@ -22,10 +22,9 @@ class mediator
 {
 public:
     mediator(const char *map, const char *status, const char *orders);
+    ~mediator();
 
 private:
-    // update map based on given orders
-    void update_map();
     // read the status file
     void update_status();
     // checks if the given orders are valid, and if so, executes them 
@@ -36,6 +35,7 @@ private:
     int fight(char attacker, char defender);
     // checks if a unit can move to the given square (is it occupied)
     bool can_move(int x, int y);
+    void check_for_new_entities();
 
 private:
     const char *file_names[3];
@@ -47,6 +47,10 @@ private:
     // squares where a unit can't stay
     std::vector<std::pair<int, int>> obstacles;
     std::pair<int, int> mapSize{0, 0};
+    // gold of each player gold.first - first player's, gold.second - second player's
+    std::pair<long, long> gold{2000, 2000};
+    // next index ID.first - first player's, ID.second - seconds player's (ID == 0 is reserved for bases) 
+    std::pair<int, int> ID{1, 1};
     // 1 - first player / 0 - second player
     bool turn;
 };

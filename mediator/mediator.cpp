@@ -40,20 +40,57 @@ mediator::mediator(const char *map, const char *status, const char *orders)
     this->map.seekg(0, std::ios::beg);
 
     // set the bases
-    playerOneUnits.insert(std::make_pair(1, new base_(0, 0)));
-    playerTwoUnits.insert(std::make_pair(1, new base_(mapSize.first, mapSize.second)));
+    playerOneUnits.insert(std::make_pair(0, new base_(0, 0)));
+    playerTwoUnits.insert(std::make_pair(0, new base_(mapSize.first, mapSize.second)));
 }
 
-void mediator::update_map()
+mediator::~mediator()
 {
+    map.close();
+    status.close();
+    orders.close();
 }
 
 void mediator::update_status()
 {
+    auto &playerUnits = (turn) ? playerOneUnits : playerTwoUnits;
+    auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
+    auto &playerGold = (turn) ? gold.first : gold.second;
+
+    if (!status.is_open())
+        return;
+
+    status.close();
+    status.open(file_names[1], std::ios::trunc);
+    status << playerGold << '\n';
+    for (auto unit : playerUnits)
+    {
+        std::pair<int, int> coords = unit.second->get_position();
+        status << "P " << unit.second->get_type() << " " << unit.first << " " << coords.first << " " << coords.second << " " << unit.second->get_health();
+        if (unit.second->get_type() == 'B')
+        {
+            base_ *base = static_cast<base_ *>(playerUnits[0]);
+            status << " " << base->get_building_type();
+        }
+        status << '\n';
+    }
+    for (auto enemyUnit : enemyUnits)
+    {
+        std::pair<int, int> coords = enemyUnit.second->get_position();
+        status << "E " << enemyUnit.second->get_type() << " " << enemyUnit.first << " " << coords.first << " " << coords.second << " " << enemyUnit.second->get_health();
+        if (enemyUnit.second->get_type() == 'B')
+        {
+            base_ *base = static_cast<base_ *>(playerUnits[0]);
+            status << " " << base->get_building_type();
+        }
+        status << '\n';
+    }
 }
 
 void mediator::exec_orders()
 {
+    if (!orders.is_open())
+        return;
     // get the order line text and divide it into seperate words
     std::string order;
     while (getline(orders, order))
@@ -135,7 +172,7 @@ void mediator::exec_orders()
             }
             else if (owbw[1] == "B")
             {
-                base_ *base = static_cast<base_ *>(playerUnits[1]);
+                base_ *base = static_cast<base_ *>(playerUnits[0]);
                 if (base != unit)
                 {
                     throw "Given ID is not a base";
@@ -244,9 +281,31 @@ bool mediator::can_move(int x, int y)
     if (x >= mapSize.first || y >= mapSize.second || x < 0 || y < 0)
         return false;
     // can't move to the enemy base square
-    auto enemyBaseCoords = enemyUnits[1]->get_position();
+    auto enemyBaseCoords = enemyUnits[0]->get_position();
     if (x == enemyBaseCoords.first && y == enemyBaseCoords.second)
         return false;
 
     return true;
+}
+
+void mediator::check_for_new_entities()
+{
+    auto &playerUnits = (turn) ? playerOneUnits : playerTwoUnits;
+    auto &playerID = (turn) ? ID.first : ID.second;
+    base_ *base = static_cast<base_ *>(playerUnits[0]);
+
+    if(base->get_building_type() == '0')
+        return;
+
+    base->one_turn();
+
+    if (base->get_time_remaining() <= 0)
+    {
+        std::pair<int, int> baseCoords = base->get_position();
+        entity *newUnit = create_entity(base->get_building_type(), baseCoords.first, baseCoords.second);
+        playerUnits.insert(std::make_pair(playerID, newUnit));
+        
+        playerID++;
+        base->build('0', -1);
+    }
 }
