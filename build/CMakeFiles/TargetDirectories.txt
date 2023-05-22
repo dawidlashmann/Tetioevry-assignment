@@ -1,0 +1,3 @@
+/home/dawid/repos/Tetioevry-assignment/build/CMakeFiles/rebuild_cache.dir
+/home/dawid/repos/Tetioevry-assignment/build/CMakeFiles/edit_cache.dir
+/home/dawid/repos/Tetioevry-assignment/build/CMakeFiles/game.dir

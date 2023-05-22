@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/game.dir/mediator/mediator.cpp.o CMakeFiles/game.dir/mediator/main_mediator.cpp.o CMakeFiles/game.dir/entity/entity.cpp.o  -o game 
