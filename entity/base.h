@@ -14,7 +14,7 @@ public:
         speed = 0;
         unitType = 'B';
         buildTimeRemaining = -1;
-        buildingEntity = ' ';
+        buildingEntity = '0';
     };
 
     void build(char unitType, int time)
