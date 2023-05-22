@@ -40,8 +40,8 @@ mediator::mediator(const char *map, const char *status, const char *orders)
     this->map.seekg(0, std::ios::beg);
 
     // set the bases
-    playerOneUnits.insert(std::make_pair(1, new base(0, 0)));
-    playerTwoUnits.insert(std::make_pair(1, new base(mapSize.first, mapSize.second)));
+    playerOneUnits.insert(std::make_pair(1, new base_(0, 0)));
+    playerTwoUnits.insert(std::make_pair(1, new base_(mapSize.first, mapSize.second)));
 }
 
 void mediator::update_map()
@@ -135,7 +135,22 @@ void mediator::exec_orders()
             }
             else if (owbw[1] == "B")
             {
-                
+                base_ *base = static_cast<base_ *>(playerUnits[1]);
+                if (base != unit)
+                {
+                    throw "Given ID is not a base";
+                }
+
+                if (base->get_time_remaining() <= 0)
+                {
+                    entity *unitTypeToBuild = create_entity(owbw[2].c_str()[0], 0, 0);
+                    base->build(owbw[2].c_str()[0], unitTypeToBuild->get_build_time());
+                    delete unitTypeToBuild;
+                }
+                else
+                {
+                    throw "Base is already building";
+                }
             }
             else
             {
