@@ -21,6 +21,7 @@ public:
     std::pair<int, int> get_position();
     char get_type() { return unitType; }
     int get_health() { return health; }
+    int get_build_time() { return buildTime; }
 
 protected:
     // current position

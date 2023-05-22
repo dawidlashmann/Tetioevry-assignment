@@ -3,10 +3,10 @@
 
 #include "entity.h"
 
-class base : public entity
+class base_ : public entity
 {
 public:
-    base(int x, int y)
+    base_(int x, int y)
     {
         this->x = x;
         this->y = y;
