@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#include "player.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +20,8 @@ int main(int argc, char *argv[])
     map = argv[1];
     status = argv[2];
     orders = argv[3];
+
+    player play(map, status, orders);
 
     return 0;
 }
