@@ -119,7 +119,7 @@ void mediator::update_status()
 
     status.close();
     status.open(fileNames[1], std::ios::trunc);
-    
+
     // write gold amount
     status << playerGold << '\n';
     // write current player's units
@@ -158,125 +158,122 @@ void mediator::exec_orders()
     std::string order;
     while (getline(orders, order))
     {
-        if (order.length() >= 3)
+        std::istringstream iss(order);
+        std::string word;
+
+        // order but word by word
+        std::vector<std::string> owbw;
+        while (iss >> word)
         {
-            std::istringstream iss(order);
-            std::string word;
+            owbw.push_back(word);
+        }
 
-            // order but word by word
-            std::vector<std::string> owbw;
-            while (iss >> word)
-            {
-                owbw.push_back(word);
-            }
+        // use player list based on which player's turn is now
+        auto &playerUnits = (turn) ? playerOneUnits : playerTwoUnits;
+        auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
 
-            // use player list based on which player's turn is now
-            auto &playerUnits = (turn) ? playerOneUnits : playerTwoUnits;
-            auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
+        // get particular unit using the provided ID
+        // first check if a unit with that ID even exists to prevent any memory leaks
+        entity *unit;
+        if (playerUnits.find(std::stoi(owbw[0])) != playerUnits.end())
+        {
+            unit = playerUnits[std::stoi(owbw[0])];
+        }
+        else
+        {
+            throw "Unit with provided ID does not exists";
+            winner = (turn) ? 2 : 1;
+            return;
+        }
 
-            // get particular unit using the provided ID
-            // first check if a unit with that ID even exists to prevent any memory leaks
-            entity *unit;
-            if (playerUnits.find(std::stoi(owbw[0])) != playerUnits.end())
+        // perform an action based on given order
+        if (owbw[1] == "M")
+        {
+            // has to check if the space if occupied
+            if (can_move(std::stoi(owbw[2]), std::stoi(owbw[3])))
             {
-                unit = playerUnits[std::stoi(owbw[0])];
-            }
-            else
-            {
-                throw "Unit with provided ID does not exists";
-                winner = (turn) ? 2 : 1;
-                return;
-            }
-
-            // perform an action based on given order
-            if (owbw[1] == "M")
-            {
-                // has to check if the space if occupied
-                if (can_move(std::stoi(owbw[2]), std::stoi(owbw[3])))
-                {
-                    if (!unit->move(std::stoi(owbw[2]), std::stoi(owbw[3])))
-                    {
-                        throw "Given move is not valid";
-                        winner = (turn) ? 2 : 1;
-                        return;
-                    };
-                }
-                else
+                if (!unit->move(std::stoi(owbw[2]), std::stoi(owbw[3])))
                 {
                     throw "Given move is not valid";
                     winner = (turn) ? 2 : 1;
                     return;
-                }
+                };
             }
-            else if (owbw[1] == "A")
+            else
             {
-                // check if an enemy unit with provided ID exists in the enemy unit structure
-                // doing that we do not have to check if we are attacking our own unit or an empty square
-                entity *enemyUnit;
-                if (enemyUnits.find(std::stoi(owbw[2])) != enemyUnits.end())
-                {
-                    enemyUnit = enemyUnits[std::stoi(owbw[2])];
-                }
-                else
-                {
-                    throw "Enemy unit with provided ID does not exists";
-                    winner = (turn) ? 2 : 1;
-                    return;
-                }
-
-                auto coordinates = enemyUnit->get_position();
-                if (unit->attack(coordinates.first, coordinates.second))
-                {
-                    enemyUnit->damage(fight(unit->get_type(), enemyUnit->get_type()));
-
-                    // if the attacked enemy's health is below or equal to 0, delete it
-                    if (enemyUnit->get_health() <= 0)
-                    {
-                        delete enemyUnit;
-                        enemyUnits.erase(enemyUnits.find(std::stoi(owbw[2])));
-                    }
-                }
-                else
-                {
-                    throw "Given attack is not valid";
-                    winner = (turn) ? 2 : 1;
-                    return;
-                }
+                throw "Given move is not valid";
+                winner = (turn) ? 2 : 1;
+                return;
             }
-            else if (owbw[1] == "B")
+        }
+        else if (owbw[1] == "A")
+        {
+            // check if an enemy unit with provided ID exists in the enemy unit structure
+            // doing that we do not have to check if we are attacking our own unit or an empty square
+            entity *enemyUnit;
+            if (enemyUnits.find(std::stoi(owbw[2])) != enemyUnits.end())
             {
-                int playerBaseID = (turn) ? 0 : 1;
-                // cast to base_, to use it's methods
-                base_ *base = static_cast<base_ *>(playerUnits[playerBaseID]);
-                // see if given ID is refering to the base
-                if (base != unit)
-                {
-                    throw "Given ID is not a base";
-                    winner = (turn) ? 2 : 1;
-                    return;
-                }
+                enemyUnit = enemyUnits[std::stoi(owbw[2])];
+            }
+            else
+            {
+                throw "Enemy unit with provided ID does not exists";
+                winner = (turn) ? 2 : 1;
+                return;
+            }
 
-                // check if the base is already during building
-                // if not start building
-                if (base->get_time_remaining() <= 0)
+            auto coordinates = enemyUnit->get_position();
+            if (unit->attack(coordinates.first, coordinates.second))
+            {
+                enemyUnit->damage(fight(unit->get_type(), enemyUnit->get_type()));
+
+                // if the attacked enemy's health is below or equal to 0, delete it
+                if (enemyUnit->get_health() <= 0)
                 {
-                    entity *unitTypeToBuild = create_entity(owbw[2].c_str()[0], 0, 0);
-                    base->build(owbw[2].c_str()[0], unitTypeToBuild->get_build_time());
-                    delete unitTypeToBuild;
-                }
-                else
-                {
-                    throw "Base is already building";
-                    winner = (turn) ? 2 : 1;
-                    return;
+                    delete enemyUnit;
+                    enemyUnits.erase(enemyUnits.find(std::stoi(owbw[2])));
                 }
             }
             else
             {
-                throw "Given order is not valid";
+                throw "Given attack is not valid";
                 winner = (turn) ? 2 : 1;
                 return;
             }
+        }
+        else if (owbw[1] == "B")
+        {
+            int playerBaseID = (turn) ? 0 : 1;
+            // cast to base_, to use it's methods
+            base_ *base = static_cast<base_ *>(playerUnits[playerBaseID]);
+            // see if given ID is refering to the base
+            if (base != unit)
+            {
+                throw "Given ID is not a base";
+                winner = (turn) ? 2 : 1;
+                return;
+            }
+
+            // check if the base is already during building
+            // if not start building
+            if (base->get_time_remaining() <= 0)
+            {
+                entity *unitTypeToBuild = create_entity(owbw[2].c_str()[0], 0, 0);
+                base->build(owbw[2].c_str()[0], unitTypeToBuild->get_build_time());
+                delete unitTypeToBuild;
+            }
+            else
+            {
+                throw "Base is already building";
+                winner = (turn) ? 2 : 1;
+                return;
+            }
+        }
+        else
+        {
+            throw "Given order is not valid";
+            winner = (turn) ? 2 : 1;
+            return;
         }
     }
 }
