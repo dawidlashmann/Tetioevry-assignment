@@ -23,3 +23,4 @@ add_executable(player ${SOURCES2})
 
 #include the header files in entity directory
 target_include_directories(game PRIVATE entity)
+target_include_directories(player PRIVATE entity)
