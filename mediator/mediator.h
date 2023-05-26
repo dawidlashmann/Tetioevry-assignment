@@ -54,8 +54,8 @@ private:
     std::pair<int, int> mapSize{0, 0};
     // gold of each player gold.first - first player's, gold.second - second player's
     std::pair<long, long> gold{2000, 2000};
-    // next index ID.first - first player's, ID.second - seconds player's (ID == 0 is reserved for bases)
-    std::pair<int, int> ID{1, 1};
+    // next index for entities: 0 and 1 is reserved for players bases, which can be changed;
+    int ID = 2;
     int turnNumber = 0;
     int winner = -1;
     // 1 - first player / 0 - second player

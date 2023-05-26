@@ -5,7 +5,17 @@ CMakeFiles/game.dir/entity/entity.cpp.o
  /home/dawid/repos/Tetioevry-assignment/entity/entity.cpp
  /home/dawid/repos/Tetioevry-assignment/entity/entity.h
 CMakeFiles/game.dir/mediator/main_mediator.cpp.o
+ ../entity/archer.h
+ ../entity/base.h
+ ../entity/catapult.h
+ ../entity/entity.h
+ ../entity/knight.h
+ ../entity/pikeman.h
+ ../entity/ram.h
+ ../entity/swordsman.h
+ ../entity/worker.h
  /home/dawid/repos/Tetioevry-assignment/mediator/main_mediator.cpp
+ /home/dawid/repos/Tetioevry-assignment/mediator/mediator.h
 CMakeFiles/game.dir/mediator/mediator.cpp.o
  ../entity/archer.h
  ../entity/base.h

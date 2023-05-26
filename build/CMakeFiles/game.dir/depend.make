@@ -4,7 +4,17 @@
 CMakeFiles/game.dir/entity/entity.cpp.o: ../entity/entity.cpp
 CMakeFiles/game.dir/entity/entity.cpp.o: ../entity/entity.h
 
+CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../entity/archer.h
+CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../entity/base.h
+CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../entity/catapult.h
+CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../entity/entity.h
+CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../entity/knight.h
+CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../entity/pikeman.h
+CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../entity/ram.h
+CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../entity/swordsman.h
+CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../entity/worker.h
 CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../mediator/main_mediator.cpp
+CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../mediator/mediator.h
 
 CMakeFiles/game.dir/mediator/mediator.cpp.o: ../entity/archer.h
 CMakeFiles/game.dir/mediator/mediator.cpp.o: ../entity/base.h

@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named player
+
+# Build rule for target.
+player: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 player
+.PHONY : player
+
+# fast build rule for target.
+player/fast:
+	$(MAKE) -f CMakeFiles/player.dir/build.make CMakeFiles/player.dir/build
+.PHONY : player/fast
+
+#=============================================================================
 # Target rules for targets named game
 
 # Build rule for target.
@@ -129,6 +142,7 @@ entity/entity.o: entity/entity.cpp.o
 
 # target to build an object file
 entity/entity.cpp.o:
+	$(MAKE) -f CMakeFiles/player.dir/build.make CMakeFiles/player.dir/entity/entity.cpp.o
 	$(MAKE) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/entity/entity.cpp.o
 .PHONY : entity/entity.cpp.o
 
@@ -138,6 +152,7 @@ entity/entity.i: entity/entity.cpp.i
 
 # target to preprocess a source file
 entity/entity.cpp.i:
+	$(MAKE) -f CMakeFiles/player.dir/build.make CMakeFiles/player.dir/entity/entity.cpp.i
 	$(MAKE) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/entity/entity.cpp.i
 .PHONY : entity/entity.cpp.i
 
@@ -147,6 +162,7 @@ entity/entity.s: entity/entity.cpp.s
 
 # target to generate assembly for a file
 entity/entity.cpp.s:
+	$(MAKE) -f CMakeFiles/player.dir/build.make CMakeFiles/player.dir/entity/entity.cpp.s
 	$(MAKE) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/entity/entity.cpp.s
 .PHONY : entity/entity.cpp.s
 
@@ -204,6 +220,60 @@ mediator/mediator.cpp.s:
 	$(MAKE) -f CMakeFiles/game.dir/build.make CMakeFiles/game.dir/mediator/mediator.cpp.s
 .PHONY : mediator/mediator.cpp.s
 
+player/main_player.o: player/main_player.cpp.o
+
+.PHONY : player/main_player.o
+
+# target to build an object file
+player/main_player.cpp.o:
+	$(MAKE) -f CMakeFiles/player.dir/build.make CMakeFiles/player.dir/player/main_player.cpp.o
+.PHONY : player/main_player.cpp.o
+
+player/main_player.i: player/main_player.cpp.i
+
+.PHONY : player/main_player.i
+
+# target to preprocess a source file
+player/main_player.cpp.i:
+	$(MAKE) -f CMakeFiles/player.dir/build.make CMakeFiles/player.dir/player/main_player.cpp.i
+.PHONY : player/main_player.cpp.i
+
+player/main_player.s: player/main_player.cpp.s
+
+.PHONY : player/main_player.s
+
+# target to generate assembly for a file
+player/main_player.cpp.s:
+	$(MAKE) -f CMakeFiles/player.dir/build.make CMakeFiles/player.dir/player/main_player.cpp.s
+.PHONY : player/main_player.cpp.s
+
+player/player.o: player/player.cpp.o
+
+.PHONY : player/player.o
+
+# target to build an object file
+player/player.cpp.o:
+	$(MAKE) -f CMakeFiles/player.dir/build.make CMakeFiles/player.dir/player/player.cpp.o
+.PHONY : player/player.cpp.o
+
+player/player.i: player/player.cpp.i
+
+.PHONY : player/player.i
+
+# target to preprocess a source file
+player/player.cpp.i:
+	$(MAKE) -f CMakeFiles/player.dir/build.make CMakeFiles/player.dir/player/player.cpp.i
+.PHONY : player/player.cpp.i
+
+player/player.s: player/player.cpp.s
+
+.PHONY : player/player.s
+
+# target to generate assembly for a file
+player/player.cpp.s:
+	$(MAKE) -f CMakeFiles/player.dir/build.make CMakeFiles/player.dir/player/player.cpp.s
+.PHONY : player/player.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -211,6 +281,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... player"
 	@echo "... edit_cache"
 	@echo "... game"
 	@echo "... entity/entity.o"
@@ -222,6 +293,12 @@ help:
 	@echo "... mediator/mediator.o"
 	@echo "... mediator/mediator.i"
 	@echo "... mediator/mediator.s"
+	@echo "... player/main_player.o"
+	@echo "... player/main_player.i"
+	@echo "... player/main_player.s"
+	@echo "... player/player.o"
+	@echo "... player/player.i"
+	@echo "... player/player.s"
 .PHONY : help
 
 

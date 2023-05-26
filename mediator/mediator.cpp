@@ -41,7 +41,7 @@ mediator::mediator(const char *map, const char *status, const char *orders)
 
     // set the bases
     playerOneUnits.insert(std::make_pair(0, new base_(0, 0)));
-    playerTwoUnits.insert(std::make_pair(0, new base_(mapSize.first, mapSize.second)));
+    playerTwoUnits.insert(std::make_pair(1, new base_(mapSize.first, mapSize.second)));
 }
 
 mediator::~mediator()
@@ -129,7 +129,8 @@ void mediator::update_status()
         status << "P " << unit.second->get_type() << " " << unit.first << " " << coords.first << " " << coords.second << " " << unit.second->get_health();
         if (unit.second->get_type() == 'B')
         {
-            base_ *base = static_cast<base_ *>(playerUnits[0]);
+            int playerBaseID = (turn) ? 0 : 1;
+            base_ *base = static_cast<base_ *>(playerUnits[playerBaseID]);
             status << " " << base->get_building_type();
         }
         status << '\n';
@@ -141,7 +142,8 @@ void mediator::update_status()
         status << "E " << enemyUnit.second->get_type() << " " << enemyUnit.first << " " << coords.first << " " << coords.second << " " << enemyUnit.second->get_health();
         if (enemyUnit.second->get_type() == 'B')
         {
-            base_ *base = static_cast<base_ *>(playerUnits[0]);
+            int enemyBaseID = (turn) ? 1 : 0;
+            base_ *base = static_cast<base_ *>(enemyUnits[enemyBaseID]);
             status << " " << base->get_building_type();
         }
         status << '\n';
@@ -243,8 +245,9 @@ void mediator::exec_orders()
             }
             else if (owbw[1] == "B")
             {
+                int playerBaseID = (turn) ? 0 : 1;
                 // cast to base_, to use it's methods
-                base_ *base = static_cast<base_ *>(playerUnits[0]);
+                base_ *base = static_cast<base_ *>(playerUnits[playerBaseID]);
                 // see if given ID is refering to the base
                 if (base != unit)
                 {
@@ -343,7 +346,7 @@ int mediator::fight(char attacker, char defender)
 bool mediator::can_move(int x, int y)
 {
     // can't move to a square occupied by enemy unit or base
-    auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
+    const auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
     for (auto enemyUnit : enemyUnits)
     {
         auto coordinates = enemyUnit.second->get_position();
@@ -368,8 +371,8 @@ bool mediator::can_move(int x, int y)
 void mediator::check_for_new_entities()
 {
     auto &playerUnits = (turn) ? playerOneUnits : playerTwoUnits;
-    auto &playerID = (turn) ? ID.first : ID.second;
-    base_ *base = static_cast<base_ *>(playerUnits[0]);
+    int playerBaseID = (turn) ? 0 : 1;
+    base_ *base = static_cast<base_ *>(playerUnits[playerBaseID]);
 
     if (base->get_building_type() == '0')
         return;
@@ -381,9 +384,9 @@ void mediator::check_for_new_entities()
     {
         std::pair<int, int> baseCoords = base->get_position();
         entity *newUnit = create_entity(base->get_building_type(), baseCoords.first, baseCoords.second);
-        playerUnits.insert(std::make_pair(playerID, newUnit));
+        playerUnits.insert(std::make_pair(ID, newUnit));
 
-        playerID++;
+        ID++;
         base->build('0', -1);
     }
 }
@@ -406,7 +409,7 @@ bool mediator::check_for_end_of_game()
         return 1;
     }
     // check if the enemy base health is below or equal to 0
-    entity *entPtr = (turn) ? playerTwoUnits[0] : playerOneUnits[0];
+    entity *entPtr = (turn) ? playerTwoUnits[1] : playerOneUnits[0];
     base_ *enemyBase = static_cast<base_ *>(entPtr);
     if (enemyBase->get_health() <= 0)
     {

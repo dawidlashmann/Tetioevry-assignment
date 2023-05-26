@@ -44,24 +44,6 @@ entity.h
 entity.h
 ../entity/entity.h
 
-/home/dawid/repos/Tetioevry-assignment/entity/entity.cpp
-entity.h
-/home/dawid/repos/Tetioevry-assignment/entity/entity.h
-
-/home/dawid/repos/Tetioevry-assignment/entity/entity.h
-utility
--
-cmath
-/home/dawid/repos/Tetioevry-assignment/entity/cmath
-
-/home/dawid/repos/Tetioevry-assignment/mediator/main_mediator.cpp
-iostream
--
-fstream
--
-string
--
-
 /home/dawid/repos/Tetioevry-assignment/mediator/mediator.cpp
 mediator.h
 /home/dawid/repos/Tetioevry-assignment/mediator/mediator.h
