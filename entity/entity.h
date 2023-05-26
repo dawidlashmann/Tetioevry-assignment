@@ -16,12 +16,13 @@ public:
     // it does not check if the coordinates are occupied by the enemy entity
     bool attack(int attX, int attY);
     // subtracts given int from current health
-    void damage(int newhp);
+    void damage(int dmg);
     // returns current coordinates: x and y
     std::pair<int, int> get_position();
     char get_type() { return unitType; }
     int get_health() { return health; }
     int get_build_time() { return buildTime; }
+    void set_health(int newHp) { health = newHp; };
 
 protected:
     // current position

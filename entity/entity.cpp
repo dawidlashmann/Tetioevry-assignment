@@ -29,9 +29,9 @@ bool entity::attack(int attX, int attY)
     return true;
 }
 
-void entity::damage(int newHealth)
+void entity::damage(int dmg)
 {
-    this->health -= newHealth;
+    this->health -= dmg;
 }
 
 std::pair<int, int> entity::get_position()
