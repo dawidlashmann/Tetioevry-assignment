@@ -30,7 +30,7 @@ mediator::mediator(const char *map, const char *status, const char *orders)
         }
         if (mapSize.first == 0)
         {
-            mapSize.second = line.length();
+            mapSize.first = line.length();
         }
         mapSize.second++;
     }
