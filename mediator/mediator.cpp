@@ -58,8 +58,8 @@ void mediator::game_begin()
     const char *playerOneProgram = "player";
     const char *playerTwoProgram = "player";
 
-    std::string commandOne = "./" + std::string(playerOneProgram) + "map.txt status.txt orders.txt";
-    std::string commandTwo = "./" + std::string(playerTwoProgram) + "map.txt status.txt orders.txt";
+    std::string commandOne = "./" + std::string(playerOneProgram) + " map.txt status.txt orders.txt";
+    std::string commandTwo = "./" + std::string(playerTwoProgram) + " map.txt status.txt orders.txt";
 
     // game loop
     while (true)
