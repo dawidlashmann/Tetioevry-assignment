@@ -96,35 +96,25 @@ void player::get_orders()
 
 std::pair<int, int> player::move(entity *unit)
 {
+
     const std::pair<int, int> &unitCoords = unit->get_position();
-    int moveX, moveY;
     int movesAvaiable = unit->get_speed() - 1;
 
-    // "best" move case
-    {
-        const std::pair<int, int> &enemyBaseCoords = enemyBase->get_position();
-
-        int distanceX = abs(unitCoords.first - enemyBaseCoords.first);
-        int distanceY = abs(unitCoords.second - enemyBaseCoords.second);
-        int distance = distanceX + distanceY;
-
-        float distanceRatioX = static_cast<float>(distanceX) / static_cast<float>(distance);
-        float distanceRatioY = static_cast<float>(distanceY) / static_cast<float>(distance);
-        moveX = static_cast<int>(distanceRatioX * movesAvaiable);
-        moveY = static_cast<int>(distanceRatioY * movesAvaiable);
-    }
-
-    std::vector<std::pair<int, std::pair<int, int>>> legalMoves;
+    auto enemyBaseCoords = enemyBase->get_position();
+    int statringDistance = abs(enemyBaseCoords.first - unitCoords.first) + abs(enemyBaseCoords.second - unitCoords.second);
+    std::pair<int, std::pair<int, int>> bestMove{statringDistance, {unitCoords.first, unitCoords.second}};
 
     std::queue<std::pair<int, int>> adjacentSquares;
-    adjacentSquares.emplace(unitCoords.first + moveX, unitCoords.second + moveY);
+    std::vector<std::pair<int, int>> visited;
+    adjacentSquares.emplace(unitCoords.first, unitCoords.second);
 
-    bool isMoveLegal = false;
     while (!adjacentSquares.empty())
     {
-        moveX = adjacentSquares.front().first;
-        moveY = adjacentSquares.front().second;
+        int moveX = adjacentSquares.front().first;
+        int moveY = adjacentSquares.front().second;
         adjacentSquares.pop();
+
+        visited.emplace_back(moveX, moveY);
 
         for (int i = -1; i <= 1; i++)
         {
@@ -133,7 +123,20 @@ std::pair<int, int> player::move(entity *unit)
                 if (i == 0 && j == 0)
                     continue;
 
-                if (((moveX + i) + (moveY + j)) >= movesAvaiable)
+                if ((abs(unitCoords.first - (moveX + i)) + abs(unitCoords.second - (moveY + j))) >= movesAvaiable)
+                    continue;
+
+                std::pair<int, int> nextSquare{moveX + i, moveY + j};
+                bool next = false;
+                for (auto previous : visited)
+                {
+                    if (previous == nextSquare)
+                    {
+                        next = true;
+                        break;
+                    }
+                }
+                if (next)
                     continue;
 
                 adjacentSquares.emplace(moveX + i, moveY + j);
@@ -153,28 +156,31 @@ std::pair<int, int> player::move(entity *unit)
                 continue;
         }
 
-        auto enemyBaseCoords = enemyBase->get_position();
         if (enemyBaseCoords.first == moveX && enemyBaseCoords.second == moveY)
             continue;
 
         if (moveX >= mapSize.first || moveY >= mapSize.second || moveX < 0 || moveY < 0)
             continue;
 
-        legalMoves.emplace_back(((unitCoords.first - moveX) + (unitCoords.second - moveY)), (moveX, moveY));
-    }
+        int currentDistance = abs(enemyBaseCoords.first - moveX) + abs(enemyBaseCoords.second - moveY);
 
-    for (auto enemyUnit : enemyUnits)
-    {
-        for (auto &move : legalMoves)
+        int attackers = 0;
+        for (auto enemyUnit : enemyUnits)
         {
-            if (enemyUnit.second->attack(move.second.first, move.second.second))
+            if (enemyUnit.second->attack(moveX, moveY))
+                attackers++;
+        }
+        if (attackers <= 2)
+        {
+            if (bestMove.first > currentDistance)
             {
-                move.first -= fight(enemyUnit.second->get_type(), unit->get_type());
+                bestMove.first = currentDistance;
+                bestMove.second = std::pair<int, int>{moveX, moveY};
             }
         }
     }
 
-    return std::pair<int, int>{moveX, moveY};
+    return std::pair<int, int>{0, 0};
 }
 
 entity *player::create_entity(char unitType, int x, int y)
