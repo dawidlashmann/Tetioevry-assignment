@@ -97,17 +97,21 @@ void player::runWithTimeout(float runtime)
     std::thread t(&player::get_orders, this);
 
     auto now = std::chrono::high_resolution_clock::now();
-    while (now - start_time <= timeout)
+    while (true)
     {
-        if (!t.joinable())
+        if (now - start_time >= timeout)
+        {
+            std::cout << "Time limit exceeded\n";
+            std::terminate();
+            return;
+        }
+        if (finished)
         {
             t.join();
             return;
         }
         now = std::chrono::high_resolution_clock::now();
     }
-
-    throw std::runtime_error("Time limit exceeded");
 }
 
 void player::get_orders()
@@ -133,6 +137,7 @@ void player::get_orders()
         if (attackID != -1)
             orders << unit.first << " A " << attackID << '\n';
     }
+    finished = true;
 }
 
 std::pair<int, int> player::get_move(entity *unit)

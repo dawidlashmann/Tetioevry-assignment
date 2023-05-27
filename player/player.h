@@ -11,15 +11,15 @@
 #include <queue>
 #include <thread>
 #include <chrono>
-#include "../entity/archer.h"
-#include "../entity/base.h"
-#include "../entity/catapult.h"
-#include "../entity/knight.h"
-#include "../entity/pikeman.h"
-#include "../entity/ram.h"
-#include "../entity/swordsman.h"
-#include "../entity/worker.h"
-#include "../entity/entity.h"
+#include "archer.h"
+#include "base.h"
+#include "catapult.h"
+#include "knight.h"
+#include "pikeman.h"
+#include "ram.h"
+#include "swordsman.h"
+#include "worker.h"
+#include "entity.h"
 
 class player
 {
@@ -27,6 +27,7 @@ public:
     player(const char *map_name, const char *status_name, const char *orders_name);
     ~player();
 
+    // uses multithreading to check if the program has exceeded the given time limit
     void runWithTimeout(float runtime);
 
 private:
@@ -36,7 +37,7 @@ private:
     // the best move is determined by the lowest distance remaining from the unit and enemy base
     // the best move wont be chosen if at given coordinates more than 2 enemy units can attack the unit
     std::pair<int, int> get_move(entity *unit);
-    // returns ID of attacked enemy unit 
+    // returns ID of attacked enemy unit
     // if there are more than one enemy units in bound, the ID of a unit with the lowest hp is returned
     int get_attack(entity *unit);
     // returns unit type to build
@@ -55,6 +56,7 @@ private:
     std::pair<int, base_ *> ownBase;
     std::pair<int, base_ *> enemyBase;
     int gold = -1;
+    bool finished = false;
 };
 
 #endif
