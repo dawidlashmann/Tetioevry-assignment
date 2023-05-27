@@ -23,10 +23,12 @@ public:
     int get_health() { return health; }
     int get_build_time() { return buildTime; }
     void set_health(int newHp) { health = newHp; };
+    int get_speed() { return speed; };
 
 protected:
     // current position
-    int x, y;
+    int x,
+        y;
 
     int health;
     int speed;

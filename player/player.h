@@ -7,6 +7,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cmath>
+#include <queue>
 #include "../entity/archer.h"
 #include "../entity/base.h"
 #include "../entity/catapult.h"
@@ -23,8 +25,12 @@ public:
     player(const char *map_name, const char *status_name, const char *orders_name);
     ~player();
 
+    void get_orders();
+
 private:
     entity *create_entity(char unitType, int x, int y);
+    std::pair<int, int> move(entity *unit);
+    int fight(char attacker, char defender);
 
 private:
     std::ifstream map, status;
