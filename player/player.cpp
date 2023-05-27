@@ -8,7 +8,7 @@ player::player(const char *map_name, const char *status_name, const char *orders
 
     if (!this->map.is_open() || !this->status.is_open() || !this->orders.is_open())
     {
-        std::cout << "Wrong input\nExiting\n";
+        throw "Wrong input\nExiting\n";
     }
 
     // get map size and the obstacles' position
@@ -89,6 +89,27 @@ player::~player()
     orders.close();
 }
 
+void player::runWithTimeout(float runtime)
+{
+    auto start_time = std::chrono::high_resolution_clock::now();
+    std::chrono::milliseconds timeout(static_cast<long>(runtime * 1000));
+
+    std::thread t(&player::get_orders, this);
+
+    auto now = std::chrono::high_resolution_clock::now();
+    while (now - start_time <= timeout)
+    {
+        if (!t.joinable())
+        {
+            t.join();
+            return;
+        }
+        now = std::chrono::high_resolution_clock::now();
+    }
+
+    throw std::runtime_error("Time limit exceeded");
+}
+
 void player::get_orders()
 {
     {
@@ -96,7 +117,7 @@ void player::get_orders()
         if (buildUnit != '0')
             orders << ownBase.first << " B " << buildUnit << '\n';
     }
-    
+
     for (auto unit : ownUnits)
     {
         auto attackID = get_attack(unit.second);

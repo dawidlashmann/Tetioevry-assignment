@@ -9,6 +9,8 @@
 #include <vector>
 #include <cmath>
 #include <queue>
+#include <thread>
+#include <chrono>
 #include "../entity/archer.h"
 #include "../entity/base.h"
 #include "../entity/catapult.h"
@@ -25,9 +27,11 @@ public:
     player(const char *map_name, const char *status_name, const char *orders_name);
     ~player();
 
-    void get_orders();
+    void runWithTimeout(float runtime);
 
 private:
+    // runs the below methods and prints the orders to the "orders.txt" file
+    void get_orders();
     // generates the best move
     // the best move is determined by the lowest distance remaining from the unit and enemy base
     // the best move wont be chosen if at given coordinates more than 2 enemy units can attack the unit
