@@ -15,12 +15,19 @@ set(SOURCES2
     entity/entity.cpp
 )
 
+# Find the required threads library
+find_package(Threads REQUIRED)
+
 # Add the executable for the mediator
 add_executable(game ${SOURCES1})
 
 # Add the executable for the player
 add_executable(player ${SOURCES2})
 
-#include the header files in entity directory
+# Link the executable with the Threads library
+target_link_libraries(game PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(player PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+
+# Include the header files in entity directory
 target_include_directories(game PRIVATE entity)
 target_include_directories(player PRIVATE entity)
