@@ -24,6 +24,8 @@ public:
     int get_build_time() { return buildTime; }
     void set_health(int newHp) { health = newHp; };
     int get_speed() { return speed; };
+    bool attacked_() { return attacked; };
+    int get_cost() { return cost; };
 
 protected:
     // current position

@@ -28,8 +28,16 @@ public:
     void get_orders();
 
 private:
+    // generates the best move
+    // the best move is determined by the lowest distance remaining from the unit and enemy base
+    // the best move wont be chosen if at given coordinates more than 2 enemy units can attack the unit
+    std::pair<int, int> get_move(entity *unit);
+    // returns ID of attacked enemy unit 
+    // if there are more than one enemy units in bound, the ID of a unit with the lowest hp is returned
+    int get_attack(entity *unit);
+    // returns unit type to build
+    char build();
     entity *create_entity(char unitType, int x, int y);
-    std::pair<int, int> move(entity *unit);
     int fight(char attacker, char defender);
 
 private:
@@ -38,9 +46,10 @@ private:
     std::unordered_map<int, entity *> ownUnits;
     std::unordered_map<int, entity *> enemyUnits;
     std::vector<std::pair<int, int>> obstacles;
+    std::vector<std::pair<int, int>> mines;
     std::pair<int, int> mapSize{0, 0};
-    base_ *ownBase;
-    base_ *enemyBase;
+    std::pair<int, base_ *> ownBase;
+    std::pair<int, base_ *> enemyBase;
     int gold = -1;
 };
 

@@ -21,6 +21,10 @@ player::player(const char *map_name, const char *status_name, const char *orders
             {
                 obstacles.emplace_back(col, mapSize.second);
             }
+            else if (line[col] == '6')
+            {
+                mines.emplace_back(col, mapSize.second);
+            }
         }
         if (mapSize.first == 0)
         {
@@ -54,26 +58,25 @@ player::player(const char *map_name, const char *status_name, const char *orders
         {
             auto &units = (unitStatus[0].c_str()[0] == 'P') ? ownUnits : enemyUnits;
             entity *newEntity = create_entity(unitStatus[1].c_str()[0], std::stoi(unitStatus[3]), std::stoi(unitStatus[4]));
-            char newHp = std::stoi(unitStatus[5]);
-            newEntity->set_health(std::stoi(unitStatus[5]));
+            int newHp = std::stoi(unitStatus[5]);
+            newEntity->set_health(newHp);
             if (unitStatus[1].c_str()[0] == 'B')
             {
                 if (unitStatus[0].c_str()[0] == 'P')
                 {
-                    ownBase = static_cast<base_ *>(newEntity);
-                    if (unitStatus[6].c_str()[0] != '0')
-                    {
-                        ownBase->build(unitStatus[6].c_str()[0], 1);
-                    }
+                    ownBase.first = std::stoi(unitStatus[2]);
+                    ownBase.second = static_cast<base_ *>(newEntity);
+                    ownBase.second->build(unitStatus[6].c_str()[0], 1);
                 }
                 else
                 {
-                    enemyBase = static_cast<base_ *>(newEntity);
+                    enemyBase.first = std::stoi(unitStatus[2]);
+                    enemyBase.second = static_cast<base_ *>(newEntity);
                 }
             }
             else
             {
-                units[unitStatus[2].c_str()[0]] = newEntity;
+                units[std::stoi(unitStatus[2])] = newEntity;
             }
         }
     }
@@ -88,21 +91,61 @@ player::~player()
 
 void player::get_orders()
 {
+    {
+        char buildUnit = build();
+        if (buildUnit != '0')
+            orders << ownBase.first << " B " << buildUnit << '\n';
+    }
+    
     for (auto unit : ownUnits)
     {
-        auto unitMove = move(unit.second);
+        auto attackID = get_attack(unit.second);
+
+        auto unitMove = get_move(unit.second);
+
+        if (attackID == -1)
+            attackID = get_attack(unit.second);
+
+        if (unitMove.first != -1 && unitMove.second != -1)
+            orders << unit.first << " M " << unitMove.first << " " << unitMove.second << '\n';
+
+        if (attackID != -1)
+            orders << unit.first << " A " << attackID << '\n';
     }
 }
 
-std::pair<int, int> player::move(entity *unit)
+std::pair<int, int> player::get_move(entity *unit)
 {
 
     const std::pair<int, int> &unitCoords = unit->get_position();
-    int movesAvaiable = unit->get_speed() - 1;
+    int movesAvaiable = (!unit->attacked_()) ? unit->get_speed() - 1 : unit->get_speed();
 
-    auto enemyBaseCoords = enemyBase->get_position();
+    auto enemyBaseCoords = enemyBase.second->get_position();
     int statringDistance = abs(enemyBaseCoords.first - unitCoords.first) + abs(enemyBaseCoords.second - unitCoords.second);
     std::pair<int, std::pair<int, int>> bestMove{statringDistance, {unitCoords.first, unitCoords.second}};
+
+    int attackers = 0;
+    for (const auto &enemyUnit : enemyUnits)
+    {
+        if (enemyUnit.second->attack(unitCoords.first, unitCoords.second))
+            attackers++;
+    }
+
+    std::pair<int, int> closestMine{-1, -1};
+    if (unit->get_type() == 'W')
+    {
+        int shortestDistance = mapSize.first + mapSize.second;
+        for (const auto &mine : mines)
+        {
+            int currentDistance = abs(mine.first - unitCoords.first) + abs(mine.second - unitCoords.second);
+            if (currentDistance < shortestDistance)
+            {
+                shortestDistance = currentDistance;
+                bestMove.first = shortestDistance;
+                closestMine = mine;
+            }
+        }
+    }
 
     std::queue<std::pair<int, int>> adjacentSquares;
     std::vector<std::pair<int, int>> visited;
@@ -123,7 +166,7 @@ std::pair<int, int> player::move(entity *unit)
                 if (i == 0 && j == 0)
                     continue;
 
-                if ((abs(unitCoords.first - (moveX + i)) + abs(unitCoords.second - (moveY + j))) >= movesAvaiable)
+                if ((abs(unitCoords.first - (moveX + i)) + abs(unitCoords.second - (moveY + j))) > movesAvaiable)
                     continue;
 
                 std::pair<int, int> nextSquare{moveX + i, moveY + j};
@@ -143,7 +186,7 @@ std::pair<int, int> player::move(entity *unit)
             }
         }
 
-        for (auto enemyUnit : enemyUnits)
+        for (const auto &enemyUnit : enemyUnits)
         {
             auto enemyCoords = enemyUnit.second->get_position();
             if (enemyCoords.first == moveX && enemyCoords.second == moveY)
@@ -162,15 +205,23 @@ std::pair<int, int> player::move(entity *unit)
         if (moveX >= mapSize.first || moveY >= mapSize.second || moveX < 0 || moveY < 0)
             continue;
 
-        int currentDistance = abs(enemyBaseCoords.first - moveX) + abs(enemyBaseCoords.second - moveY);
+        int currentDistance;
+        if (unit->get_type() == 'W' && closestMine.first != -1)
+        {
+            currentDistance = abs(closestMine.first - moveX) + abs(closestMine.second - moveY);
+        }
+        else
+        {
+            currentDistance = abs(enemyBaseCoords.first - moveX) + abs(enemyBaseCoords.second - moveY);
+        }
 
-        int attackers = 0;
-        for (auto enemyUnit : enemyUnits)
+        int currentAttackers = 0;
+        for (const auto &enemyUnit : enemyUnits)
         {
             if (enemyUnit.second->attack(moveX, moveY))
-                attackers++;
+                currentAttackers++;
         }
-        if (attackers <= 2)
+        if (currentAttackers <= 2 || (currentAttackers > 2 && attackers > currentAttackers))
         {
             if (bestMove.first > currentDistance)
             {
@@ -180,7 +231,88 @@ std::pair<int, int> player::move(entity *unit)
         }
     }
 
-    return std::pair<int, int>{0, 0};
+    if (bestMove.second == unitCoords)
+    {
+        bestMove.second.first = -1;
+        bestMove.second.second = -1;
+    }
+
+    return bestMove.second;
+}
+
+int player::get_attack(entity *unit)
+{
+    int ID = -1;
+    int lowestHealth = 100;
+    {
+        auto enemyBaseCoords = enemyBase.second->get_position();
+        if (unit->attack(enemyBaseCoords.first, enemyBaseCoords.second))
+        {
+            return enemyBase.first;
+        }
+    }
+    for (const auto &enemyUnit : enemyUnits)
+    {
+        auto enemyUnitCoords = enemyUnit.second->get_position();
+        if (unit->attack(enemyUnitCoords.first, enemyUnitCoords.second))
+        {
+            int unitHp = enemyUnit.second->get_health();
+            if (lowestHealth > unitHp)
+            {
+                ID = enemyUnit.first;
+                lowestHealth = unitHp;
+            }
+        }
+    }
+
+    return ID;
+}
+
+char player::build()
+{
+    if (ownBase.second->get_building_type() != '0')
+        return '0';
+
+    std::unordered_map<char, int>
+        unitNumber({{'K', 0},
+                    {'S', 0},
+                    {'A', 0},
+                    {'P', 0},
+                    {'C', 0},
+                    {'R', 0},
+                    {'W', 0}});
+    unitNumber.reserve(7);
+    for (const auto &unit : ownUnits)
+    {
+        char unitType = unit.second->get_type();
+        unitNumber[unitType]++;
+    }
+
+    std::vector<char> fewestToMost;
+    fewestToMost.reserve(7);
+    int lowestNum = 1000;
+    for (const auto &num : unitNumber)
+    {
+        if (lowestNum >= num.second)
+        {
+            lowestNum = num.second;
+            fewestToMost.emplace(fewestToMost.begin(), num.first);
+        }
+    }
+
+    char result = '0';
+    for (auto unit : fewestToMost)
+    {
+        entity *dummyEntity = create_entity(unit, 0, 0);
+        if (gold >= dummyEntity->get_cost())
+        {
+            result = unit;
+            break;
+        }
+        delete dummyEntity;
+    }
+
+    return result;
 }
 
 entity *player::create_entity(char unitType, int x, int y)

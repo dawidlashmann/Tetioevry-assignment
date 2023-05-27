@@ -15,7 +15,7 @@ public:
         cost = 100;
         attackRange = 1;
         buildTime = 2;
-        unitType = 'C';
+        unitType = 'W';
         attacked = false;
         mining = false;
     };
