@@ -27,6 +27,10 @@ mediator::mediator(const char *map, const char *status, const char *orders)
             {
                 obstacles.emplace_back(col, mapSize.second);
             }
+            if (line[col] == '6')
+            {
+                mines.emplace_back(col, mapSize.second);
+            }
         }
         if (mapSize.first == 0)
         {
@@ -41,7 +45,7 @@ mediator::mediator(const char *map, const char *status, const char *orders)
 
     // set the bases
     playerOneUnits.insert(std::make_pair(0, new base_(0, 0)));
-    playerTwoUnits.insert(std::make_pair(1, new base_(mapSize.first, mapSize.second)));
+    playerTwoUnits.insert(std::make_pair(1, new base_(mapSize.first - 1, mapSize.second - 1)));
 }
 
 mediator::~mediator()
@@ -66,10 +70,11 @@ void mediator::game_begin()
     {
         update_status();
         check_for_new_entities();
+        add_gold();
         close_files();
         system(commandOne.c_str());
         open_files();
-        //std::getchar();
+        // std::getchar();
         exec_orders();
         // if the game has ended break from the loop
         if (check_for_end_of_game() || winner != -1)
@@ -81,10 +86,11 @@ void mediator::game_begin()
 
         update_status();
         check_for_new_entities();
+        add_gold();
         close_files();
         system(commandTwo.c_str());
         open_files();
-        //std::getchar();
+        // std::getchar();
         exec_orders();
         // if the game has ended break from the loop
         if (check_for_end_of_game() || winner != -1)
@@ -95,21 +101,18 @@ void mediator::game_begin()
         turn = 1;
 
         turnNumber++;
-
-        if(turnNumber == 20)
-            break;
     }
 
     switch (winner)
     {
     case 1:
-        std::cout << "Player One is the winner";
+        std::cout << "Player One is the winner\n";
         break;
     case 2:
-        std::cout << "Player Two is the winner";
+        std::cout << "Player Two is the winner\n";
         break;
     case 3:
-        std::cout << "Draw";
+        std::cout << "Draw\n";
         break;
     }
 }
@@ -245,8 +248,8 @@ void mediator::exec_orders()
                 // if the attacked enemy's health is below or equal to 0, delete it
                 if (enemyUnit->get_health() <= 0)
                 {
-                    delete enemyUnit;
                     enemyUnits.erase(enemyUnits.find(std::stoi(owbw[2])));
+                    delete enemyUnit;
                 }
             }
             else
@@ -423,15 +426,34 @@ bool mediator::check_for_end_of_game()
         return 1;
     }
     // check if the enemy base health is below or equal to 0
-    entity *entPtr = (turn) ? playerTwoUnits[1] : playerOneUnits[0];
-    base_ *enemyBase = static_cast<base_ *>(entPtr);
-    if (enemyBase->get_health() <= 0)
+    int base = (turn) ? 1 : 0;
+    const auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
+    if (enemyUnits.find(base) == enemyUnits.end())
     {
         winner = (turn) ? 1 : 2;
         return 1;
     }
 
     return 0;
+}
+
+void mediator::add_gold()
+{
+    const auto &playerUnits = (turn) ? playerOneUnits : playerTwoUnits;
+    auto &cash = (turn) ? gold.first : gold.second;
+    for (const auto &unit : playerUnits)
+    {
+        if (unit.second->get_type() == 'W')
+        {
+            for (const auto &mine : mines)
+            {
+                if (unit.second->get_position() == mine)
+                {
+                    cash += 50;
+                }
+            }
+        }
+    }
 }
 
 void mediator::close_files()

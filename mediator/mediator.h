@@ -41,6 +41,7 @@ private:
     void check_for_new_entities();
     // checks if the game has ended 1 - player one won, 2 - player two won, 0 - draw
     bool check_for_end_of_game();
+    void add_gold();
     void close_files();
     void open_files();
 
@@ -53,6 +54,7 @@ private:
     std::unordered_map<int, entity *> playerTwoUnits;
     // squares where a unit can't stay
     std::vector<std::pair<int, int>> obstacles;
+    std::vector<std::pair<int, int>> mines;
     std::pair<int, int> mapSize{0, 0};
     // gold of each player gold.first - first player's, gold.second - second player's
     std::pair<long, long> gold{2000, 2000};
