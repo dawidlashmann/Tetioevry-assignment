@@ -213,18 +213,29 @@ std::pair<int, int> player::get_move(entity *unit)
             }
         }
 
+        bool next = false;
         for (const auto &enemyUnit : enemyUnits)
         {
             auto enemyCoords = enemyUnit.second->get_position();
             if (enemyCoords.first == moveX && enemyCoords.second == moveY)
-                continue;
+            {
+                next = true;
+                break;
+            }
         }
+        if(next)
+            continue;
 
         for (const auto &obstacle : obstacles)
         {
             if (obstacle.first == moveX && obstacle.second == moveY)
-                continue;
+            {
+                next = true;
+                break;
+            }
         }
+        if (next)
+            continue;
 
         if (enemyBaseCoords.first == moveX && enemyBaseCoords.second == moveY)
             continue;
@@ -284,10 +295,11 @@ int player::get_attack(entity *unit)
         if (unit->attack(enemyUnitCoords.first, enemyUnitCoords.second))
         {
             int unitHp = enemyUnit.second->get_health();
-            if (lowestHealth > unitHp)
+            if (lowestHealth > unitHp && unitHp > 0)
             {
                 ID = enemyUnit.first;
                 lowestHealth = unitHp;
+                unit->damage(fight(unit->get_type(), enemyUnit.second->get_type()));
             }
         }
     }
