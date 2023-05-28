@@ -14,7 +14,7 @@ mediator::mediator(const char *map, const char *status, const char *orders)
 
     if (!this->map.is_open() || !this->status.is_open())
     {
-        std::cout << "Wrong input";
+        throw std::runtime_error("Wrong input");
     }
 
     // get map size and the obstacles' coordinates
@@ -58,16 +58,18 @@ void mediator::game_begin()
     const char *playerOneProgram = "player";
     const char *playerTwoProgram = "player";
 
-    std::string commandOne = "./" + std::string(playerOneProgram) + " map.txt status.txt orders.txt";
-    std::string commandTwo = "./" + std::string(playerTwoProgram) + " map.txt status.txt orders.txt";
+    std::string commandOne = "./" + std::string(playerOneProgram) + " " + std::string(fileNames[0]) + " " + std::string(fileNames[1]) + " " + std::string(fileNames[2]);
+    std::string commandTwo = "./" + std::string(playerTwoProgram) + " " + std::string(fileNames[0]) + " " + std::string(fileNames[1]) + " " + std::string(fileNames[2]);
 
     // game loop
     while (true)
     {
         update_status();
         check_for_new_entities();
+        close_files();
         system(commandOne.c_str());
-        // char c = getchar();
+        open_files();
+        //std::getchar();
         exec_orders();
         // if the game has ended break from the loop
         if (check_for_end_of_game() || winner != -1)
@@ -79,8 +81,10 @@ void mediator::game_begin()
 
         update_status();
         check_for_new_entities();
+        close_files();
         system(commandTwo.c_str());
-        // char c = getchar();
+        open_files();
+        //std::getchar();
         exec_orders();
         // if the game has ended break from the loop
         if (check_for_end_of_game() || winner != -1)
@@ -91,6 +95,9 @@ void mediator::game_begin()
         turn = 1;
 
         turnNumber++;
+
+        if(turnNumber == 20)
+            break;
     }
 
     switch (winner)
@@ -118,7 +125,14 @@ void mediator::update_status()
         return;
 
     status.close();
-    status.open(fileNames[1], std::ios::trunc);
+    status.open(fileNames[1], std::ios::out | std::ios::trunc);
+    if (!status.is_open())
+        return;
+
+    status.close();
+    status.open(fileNames[1]);
+    if (!status.is_open())
+        return;
 
     // write gold amount
     status << playerGold << '\n';
@@ -146,6 +160,7 @@ void mediator::update_status()
             base_ *base = static_cast<base_ *>(enemyUnits[enemyBaseID]);
             status << " " << base->get_building_type();
         }
+        enemyUnit.second->next_turn();
         status << '\n';
     }
 }
@@ -181,7 +196,7 @@ void mediator::exec_orders()
         }
         else
         {
-            throw "Unit with provided ID does not exists";
+            throw std::runtime_error("Unit with provided ID does not exists");
             winner = (turn) ? 2 : 1;
             return;
         }
@@ -194,14 +209,14 @@ void mediator::exec_orders()
             {
                 if (!unit->move(std::stoi(owbw[2]), std::stoi(owbw[3])))
                 {
-                    throw "Given move is not valid";
+                    throw std::runtime_error("Given move is not valid");
                     winner = (turn) ? 2 : 1;
                     return;
                 };
             }
             else
             {
-                throw "Given move is not valid";
+                throw std::runtime_error("Given move is not valid");
                 winner = (turn) ? 2 : 1;
                 return;
             }
@@ -217,7 +232,7 @@ void mediator::exec_orders()
             }
             else
             {
-                throw "Enemy unit with provided ID does not exists";
+                throw std::runtime_error("Enemy unit with provided ID does not exists");
                 winner = (turn) ? 2 : 1;
                 return;
             }
@@ -236,7 +251,7 @@ void mediator::exec_orders()
             }
             else
             {
-                throw "Given attack is not valid";
+                throw std::runtime_error("Given attack is not valid");
                 winner = (turn) ? 2 : 1;
                 return;
             }
@@ -249,7 +264,7 @@ void mediator::exec_orders()
             // see if given ID is refering to the base
             if (base != unit)
             {
-                throw "Given ID is not a base";
+                throw std::runtime_error("Given ID is not a base");
                 winner = (turn) ? 2 : 1;
                 return;
             }
@@ -258,20 +273,22 @@ void mediator::exec_orders()
             // if not start building
             if (base->get_time_remaining() <= 0)
             {
+                auto &cash = (turn) ? gold.first : gold.second;
                 entity *unitTypeToBuild = create_entity(owbw[2].c_str()[0], 0, 0);
                 base->build(owbw[2].c_str()[0], unitTypeToBuild->get_build_time());
+                cash -= unitTypeToBuild->get_cost();
                 delete unitTypeToBuild;
             }
             else
             {
-                throw "Base is already building";
+                throw std::runtime_error("Base is already building");
                 winner = (turn) ? 2 : 1;
                 return;
             }
         }
         else
         {
-            throw "Given order is not valid";
+            throw std::runtime_error("Given order is not valid");
             winner = (turn) ? 2 : 1;
             return;
         }
@@ -373,7 +390,6 @@ void mediator::check_for_new_entities()
 
     if (base->get_building_type() == '0')
         return;
-
     base->one_turn();
 
     // if the base is building a unit and the remaining time is below or equal to 0, create that unit and add it to playerUnits
@@ -381,7 +397,8 @@ void mediator::check_for_new_entities()
     {
         std::pair<int, int> baseCoords = base->get_position();
         entity *newUnit = create_entity(base->get_building_type(), baseCoords.first, baseCoords.second);
-        playerUnits.insert(std::make_pair(ID, newUnit));
+        playerUnits[ID] = newUnit;
+        newUnit->next_turn();
 
         ID++;
         base->build('0', -1);
@@ -415,4 +432,18 @@ bool mediator::check_for_end_of_game()
     }
 
     return 0;
+}
+
+void mediator::close_files()
+{
+    map.close();
+    status.close();
+    orders.close();
+}
+
+void mediator::open_files()
+{
+    map.open(fileNames[0]);
+    status.open(fileNames[1]);
+    orders.open(fileNames[2]);
 }

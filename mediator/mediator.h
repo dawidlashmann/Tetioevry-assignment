@@ -8,15 +8,15 @@
 #include <sstream>
 #include <vector>
 #include <string>
-#include "archer.h"
-#include "base.h"
-#include "catapult.h"
-#include "knight.h"
-#include "pikeman.h"
-#include "ram.h"
-#include "swordsman.h"
-#include "worker.h"
-#include "entity.h"
+#include "../entity/archer.h"
+#include "../entity/base.h"
+#include "../entity/catapult.h"
+#include "../entity/knight.h"
+#include "../entity/pikeman.h"
+#include "../entity/ram.h"
+#include "../entity/swordsman.h"
+#include "../entity/worker.h"
+#include "../entity/entity.h"
 
 class mediator
 {
@@ -41,6 +41,8 @@ private:
     void check_for_new_entities();
     // checks if the game has ended 1 - player one won, 2 - player two won, 0 - draw
     bool check_for_end_of_game();
+    void close_files();
+    void open_files();
 
 private:
     const char *fileNames[3];
