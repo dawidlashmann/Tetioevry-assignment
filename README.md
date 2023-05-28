@@ -24,6 +24,7 @@ Build:
 * if the player's base is not already during building a `unit`, it will start building the one with the fewest occurences, unless there isn't enough `gold` to afford it
 
 ### Using the code
+* a basic map has been put inside `map.txt` with the other two left empty.
 * the files have been put in a seperate directory `txt_files/`, to keep the repo clean and organized.
 * if any files have been moved (the .txt files or the executables) the code has to be changed accordingly. 
 * the file names are inside `main_mediator.cpp` where they can be modified. Be aware that the `game` program runs `player` through Linux command system with `args` as the needed file names. Thus after any changes, it is crucial to make sure, that the correct name and path to the files (relative to `player`) is given inside the `game_begin()` method
