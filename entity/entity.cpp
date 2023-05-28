@@ -3,11 +3,11 @@
 bool entity::move(int newX, int newY)
 {
     int range = abs(newX - x) + abs(newY - y);
-    if (range > speed)
+    if (range > currentSpeed)
     {
         return false;
     }
-    speed -= range;
+    currentSpeed -= range;
     this->x = newX;
     this->y = newY;
     return true;
@@ -16,7 +16,7 @@ bool entity::move(int newX, int newY)
 bool entity::attack(int attX, int attY)
 {
     // one attack per turn
-    if (attacked || speed < 1)
+    if (attacked || currentSpeed < 1)
         return false;
 
     int range = abs(attX - x) + abs(attY - y);
@@ -24,7 +24,7 @@ bool entity::attack(int attX, int attY)
     {
         return false;
     }
-    speed -= 1;
+    currentSpeed -= 1;
     attacked = true;
     return true;
 }
@@ -37,4 +37,10 @@ void entity::damage(int dmg)
 std::pair<int, int> entity::get_position()
 {
     return std::pair<int, int>{this->x, this->y};
+}
+
+void entity::next_turn()
+{
+    currentSpeed = speed;
+    attacked = false;
 }

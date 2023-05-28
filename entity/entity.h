@@ -23,9 +23,10 @@ public:
     int get_health() { return health; }
     int get_build_time() { return buildTime; }
     void set_health(int newHp) { health = newHp; };
-    int get_speed() { return speed; };
+    int get_speed() { return currentSpeed; };
     bool attacked_() { return attacked; };
     int get_cost() { return cost; };
+    void next_turn();
 
 protected:
     // current position
@@ -34,6 +35,7 @@ protected:
 
     int health;
     int speed;
+    int currentSpeed;
     int cost;
     int attackRange;
     int buildTime;
