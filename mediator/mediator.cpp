@@ -3,12 +3,11 @@
 mediator::mediator(const char *map, const char *status, const char *orders)
 {
     turn = 1;
-    // remeber files names for reausage later on
+    
     fileNames[0] = map;
     fileNames[1] = status;
     fileNames[2] = orders;
 
-    // open .txt files
     this->map.open(map);
     this->status.open(status);
 
@@ -17,7 +16,7 @@ mediator::mediator(const char *map, const char *status, const char *orders)
         throw std::runtime_error("Wrong input");
     }
 
-    // get map size and the obstacles' coordinates
+    // get map size, the obstacles' and mines coordinates
     std::string line;
     while (getline(this->map, line))
     {
@@ -74,7 +73,6 @@ void mediator::game_begin()
         close_files();
         system(commandOne.c_str());
         open_files();
-        // std::getchar();
         exec_orders();
         // if the game has ended break from the loop
         if (check_for_end_of_game() || winner != -1)
@@ -90,7 +88,6 @@ void mediator::game_begin()
         close_files();
         system(commandTwo.c_str());
         open_files();
-        // std::getchar();
         exec_orders();
         // if the game has ended break from the loop
         if (check_for_end_of_game() || winner != -1)
@@ -119,11 +116,11 @@ void mediator::game_begin()
 
 void mediator::update_status()
 {
-    // establish which current player's units
     auto &playerUnits = (turn) ? playerOneUnits : playerTwoUnits;
     auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
     auto &playerGold = (turn) ? gold.first : gold.second;
 
+    // truncate the status file
     if (!status.is_open())
         return;
 
@@ -137,9 +134,9 @@ void mediator::update_status()
     if (!status.is_open())
         return;
 
-    // write gold amount
     status << playerGold << '\n';
-    // write current player's units
+
+    // write player's units
     for (auto unit : playerUnits)
     {
         std::pair<int, int> coords = unit.second->get_position();
@@ -152,7 +149,8 @@ void mediator::update_status()
         }
         status << '\n';
     }
-    // write current enemy's units
+
+    // write enemy's units
     for (auto enemyUnit : enemyUnits)
     {
         std::pair<int, int> coords = enemyUnit.second->get_position();
@@ -172,6 +170,7 @@ void mediator::exec_orders()
 {
     if (!orders.is_open())
         return;
+
     // get the order line text and divide it into seperate words
     std::string order;
     while (getline(orders, order))
@@ -179,19 +178,16 @@ void mediator::exec_orders()
         std::istringstream iss(order);
         std::string word;
 
-        // order but word by word
+        // order word by word
         std::vector<std::string> owbw;
         while (iss >> word)
         {
             owbw.push_back(word);
         }
 
-        // use player list based on which player's turn is now
         auto &playerUnits = (turn) ? playerOneUnits : playerTwoUnits;
         auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
 
-        // get particular unit using the provided ID
-        // first check if a unit with that ID even exists to prevent any memory leaks
         entity *unit;
         if (playerUnits.find(std::stoi(owbw[0])) != playerUnits.end())
         {
@@ -207,7 +203,6 @@ void mediator::exec_orders()
         // perform an action based on given order
         if (owbw[1] == "M")
         {
-            // has to check if the space if occupied
             if (can_move(std::stoi(owbw[2]), std::stoi(owbw[3])))
             {
                 if (!unit->move(std::stoi(owbw[2]), std::stoi(owbw[3])))
@@ -226,8 +221,6 @@ void mediator::exec_orders()
         }
         else if (owbw[1] == "A")
         {
-            // check if an enemy unit with provided ID exists in the enemy unit structure
-            // doing that we do not have to check if we are attacking our own unit or an empty square
             entity *enemyUnit;
             if (enemyUnits.find(std::stoi(owbw[2])) != enemyUnits.end())
             {
@@ -262,8 +255,10 @@ void mediator::exec_orders()
         else if (owbw[1] == "B")
         {
             int playerBaseID = (turn) ? 0 : 1;
+
             // cast to base_, to use it's methods
             base_ *base = static_cast<base_ *>(playerUnits[playerBaseID]);
+            
             // see if given ID is refering to the base
             if (base != unit)
             {
@@ -395,7 +390,8 @@ void mediator::check_for_new_entities()
         return;
     base->one_turn();
 
-    // if the base is building a unit and the remaining time is below or equal to 0, create that unit and add it to playerUnits
+    // if the base is building a unit and the remaining time is below or equal to 0
+    // create that unit and add it to playerUnits
     if (base->get_time_remaining() <= 0)
     {
         std::pair<int, int> baseCoords = base->get_position();
@@ -425,7 +421,8 @@ bool mediator::check_for_end_of_game()
         }
         return 1;
     }
-    // check if the enemy base health is below or equal to 0
+
+    // check if the enemy base still exists in the unit list
     int base = (turn) ? 1 : 0;
     const auto &enemyUnits = (turn) ? playerTwoUnits : playerOneUnits;
     if (enemyUnits.find(base) == enemyUnits.end())

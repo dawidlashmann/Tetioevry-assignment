@@ -4,11 +4,11 @@ player::player(const char *map_name, const char *status_name, const char *orders
 {
     this->map.open(map_name);
     this->status.open(status_name);
-    this->orders.open(orders_name, std::ios::out);
+    this->orders.open(orders_name, std::ios::trunc);
 
     if (!this->map.is_open() || !this->status.is_open() || !this->orders.is_open())
     {
-        throw "Wrong input\nExiting\n";
+        throw std::runtime_error("Wrong input\nExiting\n");
     }
 
     // get map size and the obstacles' position
@@ -54,6 +54,7 @@ player::player(const char *map_name, const char *status_name, const char *orders
             unitStatus.emplace_back(status_);
         }
 
+        // add each of units to it's hash map
         for (auto status : unitStatus)
         {
             auto &units = (unitStatus[0].c_str()[0] == 'P') ? ownUnits : enemyUnits;
@@ -97,6 +98,8 @@ void player::runWithTimeout(float runtime)
 
     std::thread t(&player::get_orders, this);
 
+    // constantly checks passed time, and if the t thread has finished it's job, join it and exit the function
+    // if the time limit has been exceeded terminate the program
     auto now = std::chrono::high_resolution_clock::now();
     while (true)
     {
@@ -117,12 +120,17 @@ void player::runWithTimeout(float runtime)
 
 void player::get_orders()
 {
+    // get building orders
     {
         char buildUnit = build();
         if (buildUnit != '0')
             orders << ownBase.first << " B " << buildUnit << '\n';
     }
 
+    // for each unit generate orders
+    // if a unit can attack before moving, attack and move with the remaining speed points 
+    // if can't attack, move with speed - 1 points, and try attacking again
+    // if proper orders have been generated, write them to the orders file
     for (auto unit : ownUnits)
     {
         auto attackID = get_attack(unit.second);
@@ -143,7 +151,6 @@ void player::get_orders()
 
 std::pair<int, int> player::get_move(entity *unit)
 {
-
     const std::pair<int, int> &unitCoords = unit->get_position();
     int movesAvaiable = (!unit->attacked_()) ? unit->get_speed() - 1 : unit->get_speed();
 
@@ -158,6 +165,7 @@ std::pair<int, int> player::get_move(entity *unit)
             attackers++;
     }
 
+    // if the passed unit is a worker, go towards mine, not base
     std::pair<int, int> closestMine{-1, -1};
     if (unit->get_type() == 'W')
     {
@@ -174,6 +182,8 @@ std::pair<int, int> player::get_move(entity *unit)
         }
     }
 
+    // check every square around the current square if it's suitable for moving
+    // if so, determine if it's the best move
     std::queue<std::pair<int, int>> adjacentSquares;
     std::vector<std::pair<int, int>> visited;
     adjacentSquares.emplace(unitCoords.first, unitCoords.second);
@@ -243,6 +253,7 @@ std::pair<int, int> player::get_move(entity *unit)
         if (moveX >= mapSize.first || moveY >= mapSize.second || moveX < 0 || moveY < 0)
             continue;
 
+        // if there are no mines on the map, miner should go towards the enemy base
         int currentDistance;
         if (unit->get_type() == 'W' && closestMine.first != -1)
         {
@@ -259,6 +270,8 @@ std::pair<int, int> player::get_move(entity *unit)
             if (enemyUnit.second->attack(moveX, moveY))
                 currentAttackers++;
         }
+
+        // determines if a move is the best among others
         if (currentAttackers <= 2 || (currentAttackers > 2 && attackers > currentAttackers))
         {
             if (bestMove.first > currentDistance)
@@ -269,6 +282,7 @@ std::pair<int, int> player::get_move(entity *unit)
         }
     }
 
+    // if there is no legal move, or the best move is to stay in place return {-1, -1}
     if (bestMove.second == unitCoords)
     {
         bestMove.second.first = -1;
@@ -282,6 +296,8 @@ int player::get_attack(entity *unit)
 {
     int ID = -1;
     int lowestHealth = 100;
+
+    // if the enemy base is in bound of the passed unit, attack it
     {
         auto enemyBaseCoords = enemyBase.second->get_position();
         if (unit->attack(enemyBaseCoords.first, enemyBaseCoords.second))
@@ -289,6 +305,7 @@ int player::get_attack(entity *unit)
             return enemyBase.first;
         }
     }
+    
     for (const auto &enemyUnit : enemyUnits)
     {
         auto enemyUnitCoords = enemyUnit.second->get_position();
@@ -346,6 +363,7 @@ char player::build()
         if (gold >= dummyEntity->get_cost())
         {
             result = unit;
+            delete dummyEntity;
             break;
         }
         delete dummyEntity;

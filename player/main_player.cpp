@@ -5,6 +5,7 @@
 
 int main(int argc, char *argv[])
 {
+    // get the file names and the optional time limit
     const char *map, *status, *orders;
     float limitCzasowy = 5.0f;
     if (argc == 5)
@@ -22,8 +23,7 @@ int main(int argc, char *argv[])
     orders = argv[3];
 
     player play(map, status, orders);
-    play.get_orders();
-    // play.runWithTimeout(limitCzasowy);
+    play.runWithTimeout(limitCzasowy);
 
     return 0;
 }
