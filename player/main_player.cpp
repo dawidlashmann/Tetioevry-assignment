@@ -22,7 +22,8 @@ int main(int argc, char *argv[])
     orders = argv[3];
 
     player play(map, status, orders);
-    play.runWithTimeout(limitCzasowy);
+    play.get_orders();
+    // play.runWithTimeout(limitCzasowy);
 
     return 0;
 }

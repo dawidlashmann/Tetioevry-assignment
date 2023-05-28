@@ -60,6 +60,7 @@ player::player(const char *map_name, const char *status_name, const char *orders
             entity *newEntity = create_entity(unitStatus[1].c_str()[0], std::stoi(unitStatus[3]), std::stoi(unitStatus[4]));
             int newHp = std::stoi(unitStatus[5]);
             newEntity->set_health(newHp);
+            newEntity->next_turn();
             if (unitStatus[1].c_str()[0] == 'B')
             {
                 if (unitStatus[0].c_str()[0] == 'P')

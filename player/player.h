@@ -11,15 +11,15 @@
 #include <queue>
 #include <thread>
 #include <chrono>
-#include "archer.h"
-#include "base.h"
-#include "catapult.h"
-#include "knight.h"
-#include "pikeman.h"
-#include "ram.h"
-#include "swordsman.h"
-#include "worker.h"
-#include "entity.h"
+#include "../entity/archer.h"
+#include "../entity/base.h"
+#include "../entity/catapult.h"
+#include "../entity/knight.h"
+#include "../entity/pikeman.h"
+#include "../entity/ram.h"
+#include "../entity/swordsman.h"
+#include "../entity/worker.h"
+#include "../entity/entity.h"
 
 class player
 {
@@ -30,9 +30,9 @@ public:
     // uses multithreading to check if the program has exceeded the given time limit
     void runWithTimeout(float runtime);
 
+    void get_orders();
 private:
     // runs the below methods and prints the orders to the "orders.txt" file
-    void get_orders();
     // generates the best move
     // the best move is determined by the lowest distance remaining from the unit and enemy base
     // the best move wont be chosen if at given coordinates more than 2 enemy units can attack the unit
