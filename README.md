@@ -30,7 +30,7 @@ Build:
 * the file names are inside `main_mediator.cpp` where they can be modified. Be aware that the `game` program runs `player` through Linux command system with `args` as the needed file names. Thus after any changes, it is crucial to make sure, that the correct name and path to the files (relative to `player`) is given inside the `game_begin()` method
 * to use a diffrent program as the player/s, please refer to the `game_begin()` method inside `mediator.cpp`
 * `CMakeLists.txt` file is provided for using cmake, as well as `Makefile` file inside `build/` direcotry for automatic building
-* if any changes have been made to the files placement, the path needs to be updated there
+* if any changes have been made to the files' placement, the path needs to be updated there
 * additionaly, `CMakeLists.txt` file is linking to the `entity/` directory, thus the path needs to be changed accordingly to the changes made in the repo
 
 In case of any issues, please contact me any way possible.
