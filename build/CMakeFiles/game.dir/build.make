@@ -60,41 +60,41 @@ include CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/mediator/mediator.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/mediator/mediator.cpp.o: ../mediator/mediator.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dawid/repos/Tetioevry-assignment/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/game.dir/mediator/mediator.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/game.dir/mediator/mediator.cpp.o -c /home/dawid/repos/Tetioevry-assignment/mediator/mediator.cpp
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/game.dir/mediator/mediator.cpp.o -c /home/dawid/repos/Tetioevry-assignment/mediator/mediator.cpp
 
 CMakeFiles/game.dir/mediator/mediator.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/game.dir/mediator/mediator.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dawid/repos/Tetioevry-assignment/mediator/mediator.cpp > CMakeFiles/game.dir/mediator/mediator.cpp.i
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dawid/repos/Tetioevry-assignment/mediator/mediator.cpp > CMakeFiles/game.dir/mediator/mediator.cpp.i
 
 CMakeFiles/game.dir/mediator/mediator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/game.dir/mediator/mediator.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dawid/repos/Tetioevry-assignment/mediator/mediator.cpp -o CMakeFiles/game.dir/mediator/mediator.cpp.s
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dawid/repos/Tetioevry-assignment/mediator/mediator.cpp -o CMakeFiles/game.dir/mediator/mediator.cpp.s
 
 CMakeFiles/game.dir/mediator/main_mediator.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/mediator/main_mediator.cpp.o: ../mediator/main_mediator.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dawid/repos/Tetioevry-assignment/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/game.dir/mediator/main_mediator.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/game.dir/mediator/main_mediator.cpp.o -c /home/dawid/repos/Tetioevry-assignment/mediator/main_mediator.cpp
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/game.dir/mediator/main_mediator.cpp.o -c /home/dawid/repos/Tetioevry-assignment/mediator/main_mediator.cpp
 
 CMakeFiles/game.dir/mediator/main_mediator.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/game.dir/mediator/main_mediator.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dawid/repos/Tetioevry-assignment/mediator/main_mediator.cpp > CMakeFiles/game.dir/mediator/main_mediator.cpp.i
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dawid/repos/Tetioevry-assignment/mediator/main_mediator.cpp > CMakeFiles/game.dir/mediator/main_mediator.cpp.i
 
 CMakeFiles/game.dir/mediator/main_mediator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/game.dir/mediator/main_mediator.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dawid/repos/Tetioevry-assignment/mediator/main_mediator.cpp -o CMakeFiles/game.dir/mediator/main_mediator.cpp.s
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dawid/repos/Tetioevry-assignment/mediator/main_mediator.cpp -o CMakeFiles/game.dir/mediator/main_mediator.cpp.s
 
 CMakeFiles/game.dir/entity/entity.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/entity/entity.cpp.o: ../entity/entity.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dawid/repos/Tetioevry-assignment/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/game.dir/entity/entity.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/game.dir/entity/entity.cpp.o -c /home/dawid/repos/Tetioevry-assignment/entity/entity.cpp
+	/usr/bin/g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/game.dir/entity/entity.cpp.o -c /home/dawid/repos/Tetioevry-assignment/entity/entity.cpp
 
 CMakeFiles/game.dir/entity/entity.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/game.dir/entity/entity.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dawid/repos/Tetioevry-assignment/entity/entity.cpp > CMakeFiles/game.dir/entity/entity.cpp.i
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dawid/repos/Tetioevry-assignment/entity/entity.cpp > CMakeFiles/game.dir/entity/entity.cpp.i
 
 CMakeFiles/game.dir/entity/entity.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/game.dir/entity/entity.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dawid/repos/Tetioevry-assignment/entity/entity.cpp -o CMakeFiles/game.dir/entity/entity.cpp.s
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dawid/repos/Tetioevry-assignment/entity/entity.cpp -o CMakeFiles/game.dir/entity/entity.cpp.s
 
 # Object files for target game
 game_OBJECTS = \

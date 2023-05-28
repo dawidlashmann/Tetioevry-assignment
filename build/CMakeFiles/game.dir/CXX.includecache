@@ -6,43 +6,43 @@
 
 #IncludeRegexTransform: 
 
-../entity/archer.h
+/home/dawid/repos/Tetioevry-assignment/entity/archer.h
 entity.h
-../entity/entity.h
+/home/dawid/repos/Tetioevry-assignment/entity/entity.h
 
-../entity/base.h
+/home/dawid/repos/Tetioevry-assignment/entity/base.h
 entity.h
-../entity/entity.h
+/home/dawid/repos/Tetioevry-assignment/entity/entity.h
 
-../entity/catapult.h
+/home/dawid/repos/Tetioevry-assignment/entity/catapult.h
 entity.h
-../entity/entity.h
+/home/dawid/repos/Tetioevry-assignment/entity/entity.h
 
-../entity/entity.h
+/home/dawid/repos/Tetioevry-assignment/entity/entity.h
 utility
 -
 cmath
-../entity/cmath
+/home/dawid/repos/Tetioevry-assignment/entity/cmath
 
-../entity/knight.h
+/home/dawid/repos/Tetioevry-assignment/entity/knight.h
 entity.h
-../entity/entity.h
+/home/dawid/repos/Tetioevry-assignment/entity/entity.h
 
-../entity/pikeman.h
+/home/dawid/repos/Tetioevry-assignment/entity/pikeman.h
 entity.h
-../entity/entity.h
+/home/dawid/repos/Tetioevry-assignment/entity/entity.h
 
-../entity/ram.h
+/home/dawid/repos/Tetioevry-assignment/entity/ram.h
 entity.h
-../entity/entity.h
+/home/dawid/repos/Tetioevry-assignment/entity/entity.h
 
-../entity/swordsman.h
+/home/dawid/repos/Tetioevry-assignment/entity/swordsman.h
 entity.h
-../entity/entity.h
+/home/dawid/repos/Tetioevry-assignment/entity/entity.h
 
-../entity/worker.h
+/home/dawid/repos/Tetioevry-assignment/entity/worker.h
 entity.h
-../entity/entity.h
+/home/dawid/repos/Tetioevry-assignment/entity/entity.h
 
 /home/dawid/repos/Tetioevry-assignment/mediator/mediator.cpp
 mediator.h
@@ -63,22 +63,22 @@ vector
 -
 string
 -
-archer.h
-/home/dawid/repos/Tetioevry-assignment/mediator/archer.h
-base.h
-/home/dawid/repos/Tetioevry-assignment/mediator/base.h
-catapult.h
-/home/dawid/repos/Tetioevry-assignment/mediator/catapult.h
-knight.h
-/home/dawid/repos/Tetioevry-assignment/mediator/knight.h
-pikeman.h
-/home/dawid/repos/Tetioevry-assignment/mediator/pikeman.h
-ram.h
-/home/dawid/repos/Tetioevry-assignment/mediator/ram.h
-swordsman.h
-/home/dawid/repos/Tetioevry-assignment/mediator/swordsman.h
-worker.h
-/home/dawid/repos/Tetioevry-assignment/mediator/worker.h
-entity.h
-/home/dawid/repos/Tetioevry-assignment/mediator/entity.h
+../entity/archer.h
+/home/dawid/repos/Tetioevry-assignment/entity/archer.h
+../entity/base.h
+/home/dawid/repos/Tetioevry-assignment/entity/base.h
+../entity/catapult.h
+/home/dawid/repos/Tetioevry-assignment/entity/catapult.h
+../entity/knight.h
+/home/dawid/repos/Tetioevry-assignment/entity/knight.h
+../entity/pikeman.h
+/home/dawid/repos/Tetioevry-assignment/entity/pikeman.h
+../entity/ram.h
+/home/dawid/repos/Tetioevry-assignment/entity/ram.h
+../entity/swordsman.h
+/home/dawid/repos/Tetioevry-assignment/entity/swordsman.h
+../entity/worker.h
+/home/dawid/repos/Tetioevry-assignment/entity/worker.h
+../entity/entity.h
+/home/dawid/repos/Tetioevry-assignment/entity/entity.h
 
