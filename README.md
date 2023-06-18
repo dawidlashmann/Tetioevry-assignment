@@ -1,4 +1,4 @@
-# Tetioevry-assignment
+# Tietoevry-assignment
 ### About
 This project is a text based game, utilising `.txt` files as the board.
 
