@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/home/dawid/repos/Tetioevry-assignment/build",
+  "command": "/usr/bin/g++   -I/home/dawid/repos/Tetioevry-assignment/entity  -g   -o CMakeFiles/player.dir/player/player.cpp.o -c /home/dawid/repos/Tetioevry-assignment/player/player.cpp",
+  "file": "/home/dawid/repos/Tetioevry-assignment/player/player.cpp"
+},
+{
+  "directory": "/home/dawid/repos/Tetioevry-assignment/build",
+  "command": "/usr/bin/g++   -I/home/dawid/repos/Tetioevry-assignment/entity  -g   -o CMakeFiles/player.dir/player/main_player.cpp.o -c /home/dawid/repos/Tetioevry-assignment/player/main_player.cpp",
+  "file": "/home/dawid/repos/Tetioevry-assignment/player/main_player.cpp"
+},
+{
+  "directory": "/home/dawid/repos/Tetioevry-assignment/build",
+  "command": "/usr/bin/g++   -I/home/dawid/repos/Tetioevry-assignment/entity  -g   -o CMakeFiles/player.dir/entity/entity.cpp.o -c /home/dawid/repos/Tetioevry-assignment/entity/entity.cpp",
+  "file": "/home/dawid/repos/Tetioevry-assignment/entity/entity.cpp"
+},
+{
+  "directory": "/home/dawid/repos/Tetioevry-assignment/build",
+  "command": "/usr/bin/g++   -I/home/dawid/repos/Tetioevry-assignment/entity  -g   -o CMakeFiles/game.dir/mediator/mediator.cpp.o -c /home/dawid/repos/Tetioevry-assignment/mediator/mediator.cpp",
+  "file": "/home/dawid/repos/Tetioevry-assignment/mediator/mediator.cpp"
+},
+{
+  "directory": "/home/dawid/repos/Tetioevry-assignment/build",
+  "command": "/usr/bin/g++   -I/home/dawid/repos/Tetioevry-assignment/entity  -g   -o CMakeFiles/game.dir/mediator/main_mediator.cpp.o -c /home/dawid/repos/Tetioevry-assignment/mediator/main_mediator.cpp",
+  "file": "/home/dawid/repos/Tetioevry-assignment/mediator/main_mediator.cpp"
+},
+{
+  "directory": "/home/dawid/repos/Tetioevry-assignment/build",
+  "command": "/usr/bin/g++   -I/home/dawid/repos/Tetioevry-assignment/entity  -g   -o CMakeFiles/game.dir/entity/entity.cpp.o -c /home/dawid/repos/Tetioevry-assignment/entity/entity.cpp",
+  "file": "/home/dawid/repos/Tetioevry-assignment/entity/entity.cpp"
+}
+]

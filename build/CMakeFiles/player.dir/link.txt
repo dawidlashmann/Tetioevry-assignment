@@ -1,0 +1,1 @@
+/usr/bin/g++  -g  -rdynamic CMakeFiles/player.dir/player/player.cpp.o CMakeFiles/player.dir/player/main_player.cpp.o CMakeFiles/player.dir/entity/entity.cpp.o  -o player  -lpthread 
