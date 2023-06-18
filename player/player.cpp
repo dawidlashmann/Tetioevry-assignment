@@ -106,6 +106,11 @@ void player::runWithTimeout(float runtime)
         if (now - start_time >= timeout)
         {
             std::cout << "Time limit exceeded\n";
+
+            map.close();
+            status.close();
+            orders.close();
+
             std::terminate();
             return;
         }
@@ -128,23 +133,25 @@ void player::get_orders()
     }
 
     // for each unit generate orders
-    // if a unit can attack before moving, attack and move with the remaining speed points 
+    // if a unit can attack before moving, attack and move with the remaining speed points
     // if can't attack, move with speed - 1 points, and try attacking again
     // if proper orders have been generated, write them to the orders file
     for (auto unit : ownUnits)
     {
         auto attackID = get_attack(unit.second);
+        if (attackID != -1)
+            orders << unit.first << " A " << attackID << '\n';
 
         auto unitMove = get_move(unit.second);
-
-        if (attackID == -1)
-            attackID = get_attack(unit.second);
-
         if (unitMove.first != -1 && unitMove.second != -1)
             orders << unit.first << " M " << unitMove.first << " " << unitMove.second << '\n';
 
-        if (attackID != -1)
-            orders << unit.first << " A " << attackID << '\n';
+        if (attackID == -1)
+        {
+            attackID = get_attack(unit.second);
+            if(attackID != -1)
+                orders << unit.first << " A " << attackID << '\n';
+        }
     }
     finished = true;
 }
@@ -161,7 +168,7 @@ std::pair<int, int> player::get_move(entity *unit)
     int attackers = 0;
     for (const auto &enemyUnit : enemyUnits)
     {
-        if (enemyUnit.second->attack(unitCoords.first, unitCoords.second))
+        if (enemyUnit.second->can_attack(unitCoords.first, unitCoords.second))
             attackers++;
     }
 
@@ -233,7 +240,7 @@ std::pair<int, int> player::get_move(entity *unit)
                 break;
             }
         }
-        if(next)
+        if (next)
             continue;
 
         for (const auto &obstacle : obstacles)
@@ -267,7 +274,7 @@ std::pair<int, int> player::get_move(entity *unit)
         int currentAttackers = 0;
         for (const auto &enemyUnit : enemyUnits)
         {
-            if (enemyUnit.second->attack(moveX, moveY))
+            if (enemyUnit.second->can_attack(moveX, moveY))
                 currentAttackers++;
         }
 
@@ -288,6 +295,10 @@ std::pair<int, int> player::get_move(entity *unit)
         bestMove.second.first = -1;
         bestMove.second.second = -1;
     }
+    else
+    {
+        unit->move(bestMove.second.first, bestMove.second.second);
+    }
 
     return bestMove.second;
 }
@@ -295,30 +306,39 @@ std::pair<int, int> player::get_move(entity *unit)
 int player::get_attack(entity *unit)
 {
     int ID = -1;
-    int lowestHealth = 100;
+    int lowestHealth = 201;
 
     // if the enemy base is in bound of the passed unit, attack it
     {
         auto enemyBaseCoords = enemyBase.second->get_position();
-        if (unit->attack(enemyBaseCoords.first, enemyBaseCoords.second))
+        if (unit->can_attack(enemyBaseCoords.first, enemyBaseCoords.second))
         {
+            unit->attack(enemyBaseCoords.first, enemyBaseCoords.second);
             return enemyBase.first;
         }
     }
-    
+
     for (const auto &enemyUnit : enemyUnits)
     {
         auto enemyUnitCoords = enemyUnit.second->get_position();
-        if (unit->attack(enemyUnitCoords.first, enemyUnitCoords.second))
+        if (unit->can_attack(enemyUnitCoords.first, enemyUnitCoords.second))
         {
             int unitHp = enemyUnit.second->get_health();
             if (lowestHealth > unitHp && unitHp > 0)
             {
                 ID = enemyUnit.first;
                 lowestHealth = unitHp;
-                unit->damage(fight(unit->get_type(), enemyUnit.second->get_type()));
             }
         }
+    }
+
+    if (ID != -1)
+    {
+        auto enemyCoords = enemyUnits[ID]->get_position();
+        unit->attack(enemyCoords.first, enemyCoords.second);
+        enemyUnits[ID]->damage(fight(unit->get_type(), enemyUnits[ID]->get_type()));
+        if (enemyUnits[ID]->get_health() <= 0)
+            enemyUnits.erase(ID);
     }
 
     return ID;
@@ -337,7 +357,6 @@ char player::build()
                     {'C', 0},
                     {'R', 0},
                     {'W', 0}});
-    unitNumber.reserve(7);
     for (const auto &unit : ownUnits)
     {
         char unitType = unit.second->get_type();
