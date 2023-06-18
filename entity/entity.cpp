@@ -29,6 +29,19 @@ bool entity::attack(int attX, int attY)
     return true;
 }
 
+bool entity::can_attack(int attX, int attY)
+{
+    if (attacked || currentSpeed < 1)
+        return false;
+
+    int range = abs(attX - x) + abs(attY - y);
+    if (range > attackRange)
+    {
+        return false;
+    }
+    return true;
+}
+
 void entity::damage(int dmg)
 {
     this->health -= dmg;
